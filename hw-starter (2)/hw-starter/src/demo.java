@@ -7,15 +7,62 @@
  * Build:  javac *.java
  * Run:    java demo        (run it from the folder that contains the ids folder)
  */
-public class demo
+
+public class demo 
 {
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args) throws Exception 
     {
-        printInfo(); // Method provided by Mark
-        cpuBusyIdle();
+        //printInfo();
+        memUsage();
+        cpuLoad();
     }
 
-    public static void printInfo() throws Exception
+    public static void cpuLoad() throws Exception //Gets the busy & idle time intervals for all cores.
+    {
+        System.out.println("----- CPU Stats -----");
+
+        int coreCount = cpuInfo.getCount();
+        int coreBusyStart[] = new int[coreCount];
+        int coreIdleStart[] = new int[coreCount];
+        double averageLoad = 0;
+
+        for (int i = 0; i < coreCount; i++) {
+            coreBusyStart[i] = (int) cpuInfo.getBusy(i);
+            coreIdleStart[i] = (int) cpuInfo.getIdle(i);
+        }
+
+        Thread.sleep(1000); // waits for 1 second
+
+        for (int i = 0; i < coreCount; i++) {
+            double busyDelta = cpuInfo.getBusy(i) - coreBusyStart[i];
+            double idleDelta = cpuInfo.getIdle(i) - coreIdleStart[i];
+            double totalDelta = busyDelta + idleDelta;
+            double load = 100.0 * busyDelta / totalDelta;
+            String ftLoad = String.format("%.2f", load);
+
+            System.out.print("Core " + i + ": ");
+            System.out.println("Load = " + ftLoad);
+            averageLoad += load;
+        }
+        averageLoad /= coreCount;
+        String ftLoad = String.format("%.2f", averageLoad);
+        System.out.println("Average Load = " + ftLoad);
+    }
+
+    public static void memUsage() 
+    {
+        System.out.println("----- Memory Stats -----");
+
+        double memTotal = memInfo.getTotal();
+        double memUsed = memInfo.getUsed();
+        double memPer = (memUsed / memTotal) * 100;
+        String ftPer = String.format("%.2f", memPer);
+
+        System.out.println("Memory : Total = " + memTotal + " KiB || Used = " + memUsed + " KiB");
+        System.out.println("Percentage Used = " + ftPer + "%");
+    }
+
+    public static void printInfo() throws Exception // Method provided by Mark
     {
         System.out.println("----- System Info -----");
         System.out.println("Cores:  " + cpuInfo.getCount());
@@ -40,30 +87,6 @@ public class demo
             System.out.printf("  Bus %03d Device %03d: ID %04x:%04x  %s %s%n", usbInfo.getBusNumber(i),
                               usbInfo.getDeviceNumber(i), vendor, product,
                               usb.vendorName(vendor), usb.deviceName(vendor, product));
-        }
-    }
-
-    public static void cpuBusyIdle() throws Exception //Gets the busy & idle time intervals for all cores.
-    {
-        int coreCount = cpuInfo.getCount();
-        int coreBusy0[] = new int[coreCount];
-        int coreIdle0[] = new int[coreCount];
-        int coreBusy1[] = new int[coreCount];
-        int coreIdle1[] = new int[coreCount];
-
-        for (int i = 0; i < coreCount; i++) {
-            coreBusy0[i] = (int) cpuInfo.getBusy(i);
-            coreIdle0[i] = (int) cpuInfo.getIdle(i);
-        }
-
-        Thread.sleep(1000); // waits for 1 second
-
-        for (int i = 0; i < coreCount; i++) {
-            coreBusy1[i] = (int) cpuInfo.getBusy(i);
-            coreIdle1[i] = (int) cpuInfo.getIdle(i);
-            System.out.print("Core " + (i) + " : ");
-            System.out.print("Busy = " + (coreBusy0[i] - coreBusy1[i]) + " || ");
-            System.out.println("Idle = " + (coreIdle0[i] - coreIdle1[i]) );
         }
     }
 }
