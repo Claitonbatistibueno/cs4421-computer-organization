@@ -14,7 +14,7 @@ public class demo
     {
         //printInfo();
         memUsage();
-        cpuLoad();
+        //cpuLoad();
     }
 
     public static void cpuLoad() throws Exception //Gets the busy & idle time intervals for all cores.
@@ -51,14 +51,19 @@ public class demo
 
     public static void memUsage() 
     {
-        System.out.println("----- Memory Stats -----");
-
-        double memTotal = memInfo.getTotal();
-        double memUsed = memInfo.getUsed();
+        double memTotal = memInfo.getTotal() / 1048576;
+        double memUsed = memInfo.getUsed() / 1048576;
         double memPer = (memUsed / memTotal) * 100;
+        String ftTotal = String.format("%.2f", memTotal);
+        String ftUsed = String.format("%.2f", memUsed);
         String ftPer = String.format("%.2f", memPer);
 
-        System.out.println("Memory : Total = " + memTotal + " KiB || Used = " + memUsed + " KiB");
+        System.out.println("----- Memory Stats -----");
+        if (memTotal < 0 || memUsed < 0 ) {
+            System.out.println("Memory not accessed!");
+            return;
+        }
+        System.out.println("Memory : Total = " + ftTotal + " GiB || Used = " + ftUsed + " GiB");
         System.out.println("Percentage Used = " + ftPer + "%");
     }
 

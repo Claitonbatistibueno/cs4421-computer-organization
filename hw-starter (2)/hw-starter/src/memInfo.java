@@ -9,38 +9,45 @@ public class memInfo
     private static final Path MEMINFO = sysFile.path("/proc/meminfo");
 
     /** Total installed memory in KiB, or -1 if it cannot be read. */
-    public static long getTotal()
+    public static double getTotal()
     {
         return field("MemTotal");
     }
 
     /** Memory that programs could use right now (free plus easily reclaimed), in KiB. */
-    public static long getAvailable()
+    public static double getAvailable()
     {
         return field("MemAvailable");
     }
 
     /** Memory in use in KiB: total minus available. */
-    public static long getUsed()
+    public static double getUsed()
     {
-        long total = getTotal();
-        long available = getAvailable();
+        double total = getTotal();
+        double available = getAvailable();
         return (total < 0 || available < 0) ? -1 : total - available;
     }
 
     /** The value in KiB of a named line of /proc/meminfo such as "SwapTotal", or -1. */
-    public static long field(String name)
+    public static double field(String name)
     {
+
         for (String line : sysFile.lines(MEMINFO)) {
             if (line.startsWith(name + ":")) {
                 String[] part = line.substring(name.length() + 1).strip().split("\\s+");
                 try {
-                    return Long.parseLong(part[0]);
+                    return Double.parseDouble(part[0]);
                 } catch (NumberFormatException e) {
                     return -1;
                 }
             }
         }
         return -1;
+    }
+
+    public static void displayInfo() {
+        for (String line : sysFile.lines(MEMINFO)) {
+            System.out.println(line);
+        }
     }
 }
