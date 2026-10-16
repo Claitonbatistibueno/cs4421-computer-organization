@@ -12,14 +12,14 @@ public class demo
 {
     public static void main(String[] args) throws Exception 
     {
-        //printInfo();
-        memUsage();
-        //cpuLoad();
+        diskDisplay();
+        memDisplay();
+        usbDisplay();
     }
 
-    public static void cpuLoad() throws Exception //Gets the busy & idle time intervals for all cores.
+    public static void cpuDisplay() throws Exception //Gets the busy & idle time intervals for all cores.
     {
-        System.out.println("----- CPU Stats -----");
+        System.out.println("----- CPU Info -----");
 
         int coreCount = cpuInfo.getCount();
         int coreBusyStart[] = new int[coreCount];
@@ -49,7 +49,7 @@ public class demo
         System.out.println("Average Load = " + ftLoad);
     }
 
-    public static void memUsage() 
+    public static void memDisplay() 
     {
         double memTotal = memInfo.getTotal() / 1048576;
         double memUsed = memInfo.getUsed() / 1048576;
@@ -58,16 +58,48 @@ public class demo
         String ftUsed = String.format("%.2f", memUsed);
         String ftPer = String.format("%.2f", memPer);
 
-        System.out.println("----- Memory Stats -----");
+        System.out.println("----- Memory Info -----");
         if (memTotal < 0 || memUsed < 0 ) {
-            System.out.println("Memory not accessed!");
+            System.out.println(" Memory not accessed!");
             return;
         }
-        System.out.println("Memory : Total = " + ftTotal + " GiB || Used = " + ftUsed + " GiB");
-        System.out.println("Percentage Used = " + ftPer + "%");
+        System.out.println(" Memory : Total = " + ftTotal + " GiB || Used = " + ftUsed + " GiB");
+        System.out.println(" Percentage Used = " + ftPer + "%");
     }
 
-    public static void printInfo() throws Exception // Method provided by Mark
+    public static void diskDisplay() 
+    {
+        String driveType = diskInfo.getDriveType();
+
+        System.out.println("----- Disk Info -----");
+        System.out.println(" Disk Type: " + driveType);
+    }
+
+    public static void usbDisplay() throws Exception
+    {
+
+        idLookup usb = idLookup.usb();
+        int usbCount = usbInfo.getCount();
+
+
+    System.out.println("----- USB Info -----");
+        if (usbCount <= 0) {
+            System.out.println(" No USB devices could be found.");
+            return;
+        }
+
+        System.out.println("USB devices: " + usbInfo.getCount());
+        for (int i = 0; i < usbInfo.getCount(); i++) {
+            int vendor = usbInfo.getVendorId(i);
+            int product = usbInfo.getProductId(i);
+
+            System.out.printf("  Bus %03d Device %03d: ID %04x:%04x  %s %s%n", usbInfo.getBusNumber(i),
+                              usbInfo.getDeviceNumber(i), vendor, product,
+                              usb.vendorName(vendor), usb.deviceName(vendor, product));
+        }
+    }
+
+    public static void Mark() throws Exception // Method provided by Mark
     {
         System.out.println("----- System Info -----");
         System.out.println("Cores:  " + cpuInfo.getCount());
