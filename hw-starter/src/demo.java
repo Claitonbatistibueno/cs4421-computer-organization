@@ -30,6 +30,8 @@ public class demo {
         System.out.println("PCI devices sorted by bus, device and function:");
         pciInfo.sortByBusDeviceFunction();
         pciInfo.displayInfo();
+        System.out.println("GPU: ");
+        System.out.println(pciInfo.getGPU());
 
         idLookup usb = idLookup.usb();
         System.out.println("USB devices: " + usbInfo.getCount());
