@@ -14,6 +14,6 @@ public class diskInfo {
             if (f.getName().matches("sdd")) return "sdd";
             else if (f.getName().matches("hdd")) return "hdd";
         }
-        return "Error, directory found but couldn't locate ";
-    }
+                return "Error, directory found but couldn't locate sdd or hdd";
+      }
 }
