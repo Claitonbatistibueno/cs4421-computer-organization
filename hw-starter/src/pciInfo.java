@@ -3,7 +3,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -93,5 +95,84 @@ public class pciInfo
     public static int getClassCode(int index)
     {
         return (int) sysFile.number(list().get(index).resolve("class"));
+    }
+
+    private static String[][] pcieDevices =
+            new String[pciInfo.getCount()][5];
+
+    // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name
+
+    public static void arrayBuilderPCIe() throws IOException {
+        idLookup pci = idLookup.pci();
+
+        pcieDevices = new String[pciInfo.getCount()][5];
+
+        for (int i = 0; i < pciInfo.getCount(); i++) {
+            int vendor = pciInfo.getVendorId(i);
+            int device = pciInfo.getDeviceId(i);
+
+            pcieDevices[i][0] = pciInfo.getAddress(i);
+            pcieDevices[i][1] = String.format("%04x", vendor);
+            pcieDevices[i][2] = String.format("%04x", device);
+            pcieDevices[i][3] = pci.vendorName(vendor);
+            pcieDevices[i][4] = pci.deviceName(vendor, device);
+        }
+    }
+
+    public static void sortByVendorName() {
+        Arrays.sort(pcieDevices,Comparator.comparing(row -> row[3], Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+    }
+
+    public static void sortByBusDeviceFunction() {
+        Arrays.sort(pcieDevices, (a, b) -> {
+            String[] addrA = a[0].split("[:.]");
+            String[] addrB = b[0].split("[:.]");
+
+            for (int i = 1; i <= 3; i++) {
+                int numA = Integer.parseInt(addrA[i], 16);
+                int numB = Integer.parseInt(addrB[i], 16);
+
+                int result = Integer.compare(numA, numB);
+
+                if (result != 0) {
+                    return result;
+                }
+            }
+
+            return 0;
+        });
+    }
+
+    public static void displayInfo() {
+        for (int i = 0; i < pcieDevices.length; i++) {
+            System.out.printf(
+                "  %s  %s:%s  %s %s%n",
+                pcieDevices[i][0],
+                pcieDevices[i][1],
+                pcieDevices[i][2],
+                pcieDevices[i][3],
+                pcieDevices[i][4]
+            );
+        }
+    }
+
+    public static void displayUniqueVendors() {
+        ArrayList<String> uniqueVendors = new ArrayList<>();
+        ArrayList<Integer> quantity = new ArrayList<>();
+        for (String[] device : pcieDevices) {
+            String vendorName = device[3];
+            if (!uniqueVendors.contains(vendorName)) {
+                uniqueVendors.add(vendorName);
+                quantity.add(1);
+            } else {
+                int index = uniqueVendors.indexOf(vendorName);
+                quantity.set(index, quantity.get(index) + 1);
+            }
+        }
+
+        System.out.println("Unique PCIe Vendors:");
+        for (int i = 0; i < uniqueVendors.size(); i++) {
+            System.out.println("  " + uniqueVendors.get(i) + " (" + quantity.get(i) + ")");
+        }
     }
 }

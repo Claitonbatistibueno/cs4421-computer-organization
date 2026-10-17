@@ -1,6 +1,7 @@
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Information about the processor, read from /proc/cpuinfo and /proc/stat.
@@ -75,5 +76,33 @@ public class cpuInfo
             }
         }
         return null;
+    }
+
+     public static double perCoreLoad(int core){
+        try {
+            long busy = cpuInfo.getBusy(core);
+            long idle = cpuInfo.getIdle(core);
+            TimeUnit.SECONDS.sleep(1); 
+            busy = (cpuInfo.getBusy(core) + busy)/2;
+            idle = (cpuInfo.getIdle(core) + idle)/2;
+            long total = busy + idle;   
+            double loadPercentage = (double) busy / total * 100;
+
+            
+            return loadPercentage;
+        } catch (Exception e) {
+            System.err.println("Error calculating load for core " + core + ": " + e.getMessage());
+            return 0.0;
+        }
+    }
+
+    public static double allCoresLoad() {
+        int coreCount = cpuInfo.getCount();
+        double totalLoad = 0.0;
+        for (int i = 0; i < coreCount; i++) {
+            totalLoad += perCoreLoad(i);
+        }
+        totalLoad /= coreCount;
+        return totalLoad;
     }
 }

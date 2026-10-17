@@ -105,4 +105,38 @@ public class usbInfo
             return -1;
         }
     }
+
+    private static String[][] usbDevices = new String[usbInfo.getCount()][6];
+    // 0 - Bus Number, 1 - Device Number, 2 - Vendor ID, 3 - Product ID, 4 - Vendor Name, 5 - Product Name
+    public static void arrayBuilderUSB() throws IOException {
+        idLookup usb = idLookup.usb();
+
+        usbDevices = new String[usbInfo.getCount()][6];
+
+        for (int i = 0; i < usbInfo.getCount(); i++) {
+            int vendor = usbInfo.getVendorId(i);
+            int product = usbInfo.getProductId(i);
+
+            usbDevices[i][0] = String.format("%03d", usbInfo.getBusNumber(i));
+            usbDevices[i][1] = String.format("%03d", usbInfo.getDeviceNumber(i));
+            usbDevices[i][2] = String.format("%04x", vendor);
+            usbDevices[i][3] = String.format("%04x", product);
+            usbDevices[i][4] = usb.vendorName(vendor);
+            usbDevices[i][5] = usb.deviceName(vendor, product);
+        }
+    }        
+    
+    public static void displayUSBInfo() {
+        for (int i = 0; i < usbDevices.length; i++) {
+            System.out.printf(
+                "  Bus %s Device %s: ID %s:%s  %s %s%n",
+                usbDevices[i][0],
+                usbDevices[i][1],
+                usbDevices[i][2],
+                usbDevices[i][3],
+                usbDevices[i][4],
+                usbDevices[i][5]
+            );
+        }
+    }
 }
