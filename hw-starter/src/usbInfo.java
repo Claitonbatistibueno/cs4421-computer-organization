@@ -123,6 +123,13 @@ public class usbInfo
             usbDevices[i][3] = String.format("%04x", product);
             usbDevices[i][4] = usb.vendorName(vendor);
             usbDevices[i][5] = usb.deviceName(vendor, product);
+
+            if (usbDevices[i][4] == null){
+                usbDevices[i][4] = Integer.toHexString(vendor);
+            }
+            if (usbDevices[i][5] == null){
+                usbDevices[i][5] = Integer.toHexString(product);
+            }
         }
     }        
     
