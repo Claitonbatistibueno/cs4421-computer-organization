@@ -30,6 +30,7 @@ public class cpuInfo
      * On arm64 there is no model name line, so this returns "unknown"; use
      * getField("CPU part") or getField("CPU implementer") instead.
      */
+    
     public static String getModel()
     {
         String model = getField("model name");

@@ -1,25 +1,22 @@
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JFrame;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class demo {
-    public static void main(String[] args) throws Exception {
-        System.out.println("cores:  " + cpuInfo.getCount());
-        System.out.println("model:  " + cpuInfo.getModel());
-        System.out.println("core 0: busy=" + cpuInfo.getBusy(0)
-                + " idle=" + cpuInfo.getIdle(0));
+    public static void main(String[] args) throws Exception { 
+        System.out.println("Cores: " + cpuInfo.getCount());
+        System.out.println("Model: " + cpuInfo.getModel());
 
-        System.out.println("memory: total=" + memInfo.getTotal()
-                + " KiB, used=" + memInfo.getUsed() + " KiB");
+        //Eoin's methods
+        // memDisplay();
+        // cpuDisplay();
+        // frame();
+        diskDisplay();
 
-        System.out.printf("Percentage of RAM used: %.2f%%%n", (double) memInfo.getUsed() / memInfo.getTotal() * 100);
-
-        idLookup pci = idLookup.pci();
         System.out.println("PCI devices: " + pciInfo.getCount());
-
 
         pciInfo.arrayBuilderPCIe();
 
@@ -31,7 +28,6 @@ public class demo {
         pciInfo.sortByBusDeviceFunction();
         pciInfo.displayInfo();
 
-        idLookup usb = idLookup.usb();
         System.out.println("USB devices: " + usbInfo.getCount());
 
         usbInfo.arrayBuilderUSB();
@@ -65,19 +61,19 @@ public class demo {
         Thread.sleep(1000); // waits for 1 second
 
         for (int i = 0; i < coreCount; i++) {
-            double busyDelta = cpuInfo.getBusy(i) - coreBusyStart[i];
-            double idleDelta = cpuInfo.getIdle(i) - coreIdleStart[i];
-            double totalDelta = busyDelta + idleDelta;
-            double load = 100.0 * busyDelta / totalDelta;
+            double busy = ( cpuInfo.getBusy(i) + coreBusyStart[i] ) /2;
+            double idle = ( cpuInfo.getIdle(i) + coreIdleStart[i] ) /2;
+            double load = 100.0 * busy / (busy + idle);
+            String ftNum = String.format("%02d", i);
             String ftLoad = String.format("%.2f", load);
 
-            System.out.print("Core " + i + ": ");
-            System.out.println("Load = " + ftLoad);
+            System.out.print("Core " + ftNum + ": ");
+            System.out.println("Load = " + ftLoad + "%");
             averageLoad += load;
         }
         averageLoad /= coreCount;
         String ftLoad = String.format("%.2f", averageLoad);
-        System.out.println("Average Load = " + ftLoad);
+        System.out.println("Average Load = " + ftLoad + "%");
     }
 
     public static void memDisplay() 
@@ -106,7 +102,7 @@ public class demo {
         System.out.println(" Disk Type: " + driveType);
     }
 
-    public static void usbDisplay() throws Exception
+    public static void usbDisplay() throws Exception 
     {
 
         idLookup usb = idLookup.usb();
@@ -157,7 +153,6 @@ public class demo {
                               usb.vendorName(vendor), usb.deviceName(vendor, product));
         }
     }
-
 }
 
 class PCIeDevices {

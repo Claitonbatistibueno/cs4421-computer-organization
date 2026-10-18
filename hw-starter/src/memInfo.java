@@ -45,7 +45,7 @@ public class memInfo
         return -1;
     }
 
-    public static void displayInfo() {
+    public static void displayInfo() { // For understanding (Eoin)
         for (String line : sysFile.lines(MEMINFO)) {
             System.out.println(line);
         }
