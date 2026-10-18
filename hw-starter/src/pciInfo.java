@@ -175,4 +175,28 @@ public class pciInfo
             System.out.println("  " + uniqueVendors.get(i) + " (" + quantity.get(i) + ")");
         }
     }
+
+    public static String getGPU() throws IOException{
+        String GPU = "";
+        idLookup pci = idLookup.pci();
+        for(int i = 0; i < getCount(); i++){
+            if ((getClassCode(i) & 0xFF0000) == 0x030000) {
+                int vendor = pciInfo.getVendorId(i);
+                int device = pciInfo.getDeviceId(i);
+                GPU = GPU + String.format(
+                "  %s  %04x:%04x  %s %s%n",
+                getAddress(i),
+                vendor,
+                device,
+                pci.vendorName(vendor),
+                pci.deviceName(vendor, device)
+                );
+            }
+        }
+        if (GPU == ""){
+            return "No GPUs Found";
+        } else{
+            return GPU;
+        }
+    }
 }
