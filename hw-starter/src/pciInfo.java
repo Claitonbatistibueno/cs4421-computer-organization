@@ -98,14 +98,14 @@ public class pciInfo
     }
 
     private static String[][] pcieDevices =
-            new String[pciInfo.getCount()][5];
+            new String[pciInfo.getCount()][6];
 
-    // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name
+    // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name, 5 - Class
 
     public static void arrayBuilderPCIe() throws IOException {
         idLookup pci = idLookup.pci();
 
-        pcieDevices = new String[pciInfo.getCount()][5];
+        pcieDevices = new String[pciInfo.getCount()][7];
 
         for (int i = 0; i < pciInfo.getCount(); i++) {
             int vendor = pciInfo.getVendorId(i);
@@ -116,6 +116,8 @@ public class pciInfo
             pcieDevices[i][2] = String.format("%04x", device);
             pcieDevices[i][3] = pci.vendorName(vendor);
             pcieDevices[i][4] = pci.deviceName(vendor, device);
+            pcieDevices[i][5] = String.format("%06x", pciInfo.getClassCode(i));
+            pcieDevices[i][6] = pci.className(pciInfo.getClassCode(i));
         }
     }
 
@@ -146,12 +148,14 @@ public class pciInfo
     public static void displayInfo() {
         for (int i = 0; i < pcieDevices.length; i++) {
             System.out.printf(
-                "  %s  %s:%s  %s %s%n",
+                "  %s  %s:%s  %s %s  [%s] %s%n",
                 pcieDevices[i][0],
                 pcieDevices[i][1],
                 pcieDevices[i][2],
                 pcieDevices[i][3],
-                pcieDevices[i][4]
+                pcieDevices[i][4],
+                pcieDevices[i][5],
+                pcieDevices[i][6]
             );
         }
     }
@@ -176,27 +180,25 @@ public class pciInfo
         }
     }
 
-    public static String getGPU() throws IOException{
-        String GPU = "";
-        idLookup pci = idLookup.pci();
-        for(int i = 0; i < getCount(); i++){
-            if ((getClassCode(i) & 0xFF0000) == 0x030000) {
-                int vendor = pciInfo.getVendorId(i);
-                int device = pciInfo.getDeviceId(i);
-                GPU = GPU + String.format(
-                "  %s  %04x:%04x  %s %s%n",
-                getAddress(i),
-                vendor,
-                device,
-                pci.vendorName(vendor),
-                pci.deviceName(vendor, device)
-                );
-            }
-        }
-        if (GPU == ""){
-            return "No GPUs Found";
-        } else{
-            return GPU;
+    public static String getGPU() throws IOException {
+    StringBuilder GPU = new StringBuilder();
+    idLookup pci = idLookup.pci();
+
+    for (int i = 0; i < pcieDevices.length; i++) {
+        if (pcieDevices[i][5].startsWith("03")) {
+            GPU.append(String.format(
+                "  %s  %s:%s  %s %s  [%s] %s%n",
+                pcieDevices[i][0],
+                pcieDevices[i][1],
+                pcieDevices[i][2],
+                pcieDevices[i][3],
+                pcieDevices[i][4],
+                pcieDevices[i][5],
+                pcieDevices[i][6]
+            ));
         }
     }
+
+    return GPU.isEmpty() ? "No GPUs Found" : GPU.toString();
+}
 }
