@@ -40,6 +40,7 @@ public class demo {
         System.out.println("USB devices:");
         usbInfo.displayUSBInfo();
 
+        System.out.println("Unique PCIe Vendors:");
         pciInfo.displayUniqueVendors();
 
         System.out.println("CPU Load per core:");

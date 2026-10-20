@@ -50,9 +50,9 @@ public class display {
     }
 
     public static void diskDisplay() {
-        String driveType = diskInfo.getDriveType();
-
         System.out.println("----- Disk Info -----");
+
+        String driveType = diskInfo.getDriveType();
         System.out.println(" Disk Type: " + driveType);
     }
 
@@ -69,6 +69,7 @@ public class display {
         pciInfo.sortByBusDeviceFunction();
         pciInfo.displayInfo();
         
+        System.out.println(" Unique PCIe Vendors:");
         pciInfo.displayUniqueVendors();
     }
     

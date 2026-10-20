@@ -194,7 +194,6 @@ public class pciInfo
             }
         }
 
-        System.out.println("Unique PCIe Vendors:");
         for (int i = 0; i < uniqueVendors.size(); i++) {
             System.out.println("  " + uniqueVendors.get(i) + " (" + quantity.get(i) + ")");
         }
