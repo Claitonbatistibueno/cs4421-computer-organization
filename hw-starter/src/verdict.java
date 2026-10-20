@@ -25,7 +25,8 @@ public class verdict {
         return "NO";
     }
 
-    static final String[] VIRTUAL_GPUS = {"virtual", "hyper-v", "vmware", "virtualbox", "qxl", "virtio", "bochs", "cirrus"};
+    static final String[] VIRTUAL_GPUS = {"virtual", "hyper-v", "vmware", "virtualbox", "qxl", "virtio", "bochs", "cirrus",
+            "1234:", "1af4:", "1b36:", "15ad:", "80ee:", "1414:"};
 
     static String gpuType() throws Exception {
         String gpu = pciInfo.getGPU();
