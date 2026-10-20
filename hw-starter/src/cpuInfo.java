@@ -79,13 +79,13 @@ public class cpuInfo
         return null;
     }
 
-     public static double perCoreLoad(int core){
+    public static double perCoreLoad(int core){
         try {
             long busy = cpuInfo.getBusy(core);
             long idle = cpuInfo.getIdle(core);
             TimeUnit.SECONDS.sleep(1); 
-            busy = (cpuInfo.getBusy(core) + busy)/2;
-            idle = (cpuInfo.getIdle(core) + idle)/2;
+            busy = (cpuInfo.getBusy(core) - busy);
+            idle = (cpuInfo.getIdle(core) - idle);
             long total = busy + idle;   
             double loadPercentage = (double) busy / total * 100;
 
@@ -127,7 +127,7 @@ public class cpuInfo
         }
         for (int i = 0; i < coreCount; i++) {
             double busy = ( cpuInfo.getBusy(i) - coreBusyStarts[i] );
-            double idle = ( cpuInfo.getIdle(i) + coreIdleStarts[i] );
+            double idle = ( cpuInfo.getIdle(i) - coreIdleStarts[i] );
             double load = 100.0 * busy / (busy + idle);
             coreLoads[i] = load; 
             averageLoad += load;
