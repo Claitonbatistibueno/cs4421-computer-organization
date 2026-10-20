@@ -38,16 +38,6 @@ Notes:
   the cloud server may have no USB at all, so `getCount()` can be 0.
 - `idLookup` methods return `null` when an ID is not in the file.
 
-## Testing against a copy of /proc and /sys
 
-To test with data from another machine, copy `/proc/cpuinfo`, `/proc/stat`,
-`/proc/meminfo` and the `/sys/bus` folders into a folder, and run with
-`java -Dhw.root=/path/to/folder -cp out demo`.
 
-## The ID files
 
-`ids/pci.ids` is the PCI ID database (version 2026.10.12) from
-https://pci-ids.ucw.cz/. `ids/usb.ids` is the USB ID list (version 2026.06.26)
-from https://github.com/vcrhonek/hwdata. Both are distributed under the GNU
-General Public License (version 2 or later) or the 3-clause BSD licence. Newer
-copies can be downloaded from those sites.
