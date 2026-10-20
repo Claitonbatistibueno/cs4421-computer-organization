@@ -8,6 +8,8 @@ public class display {
         memDisplay();
         diskDisplay();
         cpuDisplay();
+        pciDisplay();
+        usbDisplay();
     }
    
     public static void basicDisplay() {
@@ -57,14 +59,30 @@ public class display {
         System.out.println(" Disk Type: " + driveType);
     }
 
+    public static void pciDisplay() throws Exception {
+        System.out.println("----- PCI Info -----");
+        System.out.println(" PCI devices: " + pciInfo.getCount());
+
+        pciInfo.arrayBuilderPCIe();
+        System.out.println(" PCI devices sorted by vendor name:");
+        pciInfo.sortByVendorName();
+        pciInfo.displayInfo();
+
+        System.out.println(" PCI devices sorted by bus, device and function:");
+        pciInfo.sortByBusDeviceFunction();
+        pciInfo.displayInfo();
+        
+        pciInfo.displayUniqueVendors();
+    }
+    
+
     public static void usbDisplay() throws Exception 
     {
+        System.out.println("----- USB Info -----");
 
         idLookup usb = idLookup.usb();
         int usbCount = usbInfo.getCount();
 
-
-    System.out.println("----- USB Info -----");
         if (usbCount <= 0) {
             System.out.println(" No USB devices could be found.");
             return;
