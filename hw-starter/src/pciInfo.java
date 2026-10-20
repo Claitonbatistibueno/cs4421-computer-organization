@@ -101,6 +101,7 @@ public class pciInfo
             new String[pciInfo.getCount()][6];
 
     // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name, 5 - Class
+    private static boolean arrayBuilt = false;
 
     public static void arrayBuilderPCIe() throws IOException {
         idLookup pci = idLookup.pci();
@@ -126,13 +127,23 @@ public class pciInfo
                 pcieDevices[i][4] = "Unknown " +  pci.className(getClassCode(i)) + " (" + String.format("%04x", device) + ")";
             }
         }
+        arrayBuilt = true;
     }
 
-    public static void sortByVendorName() {
+    private static void arrayBuiltChecker() throws IOException {
+                if (arrayBuilt == false) {
+                    arrayBuilderPCIe();
+                }
+                //System.out.println("Array built: " + arrayBuilt);
+    }
+
+    public static void sortByVendorName() throws IOException {
+        arrayBuiltChecker();
         Arrays.sort(pcieDevices,Comparator.comparing(row -> row[3], Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
     }
 
-    public static void sortByBusDeviceFunction() {
+    public static void sortByBusDeviceFunction() throws IOException {
+        arrayBuiltChecker();
         Arrays.sort(pcieDevices, (a, b) -> {
             String[] addrA = a[0].split("[:.]");
             String[] addrB = b[0].split("[:.]");
@@ -152,7 +163,8 @@ public class pciInfo
         });
     }
 
-    public static void displayInfo() {
+    public static void displayInfo() throws IOException {
+        arrayBuiltChecker();
         for (int i = 0; i < pcieDevices.length; i++) {
             System.out.printf(
                 "  %s  %s:%s  %s %s  [%s] %s%n",
@@ -167,7 +179,8 @@ public class pciInfo
         }
     }
 
-    public static void displayUniqueVendors() {
+    public static void displayUniqueVendors() throws IOException {
+        arrayBuiltChecker();
         ArrayList<String> uniqueVendors = new ArrayList<>();
         ArrayList<Integer> quantity = new ArrayList<>();
         for (String[] device : pcieDevices) {
@@ -188,6 +201,7 @@ public class pciInfo
     }
 
     public static String getGPU() throws IOException {
+    arrayBuiltChecker();
     StringBuilder GPU = new StringBuilder();
     idLookup pci = idLookup.pci();
 
