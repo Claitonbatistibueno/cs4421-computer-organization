@@ -107,8 +107,7 @@ public class cpuInfo
         return totalLoad;
     }
 
-    public static double[] fastLoad()  //Added by Eoin for faster data collection
-    {
+    public static double[] fastLoad() {  //Added by Eoin for faster data collection
         int coreCount = cpuInfo.getCount();
         double coreBusyStarts[] = new double[coreCount];
         double coreIdleStarts[] = new double[coreCount];
@@ -127,8 +126,8 @@ public class cpuInfo
             return null;
         }
         for (int i = 0; i < coreCount; i++) {
-            double busy = ( cpuInfo.getBusy(i) + coreBusyStarts[i] ) /2;
-            double idle = ( cpuInfo.getIdle(i) + coreIdleStarts[i] ) /2;
+            double busy = ( cpuInfo.getBusy(i) - coreBusyStarts[i] );
+            double idle = ( cpuInfo.getIdle(i) + coreIdleStarts[i] );
             double load = 100.0 * busy / (busy + idle);
             coreLoads[i] = load; 
             averageLoad += load;
