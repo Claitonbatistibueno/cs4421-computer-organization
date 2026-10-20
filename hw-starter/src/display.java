@@ -18,8 +18,7 @@ public class display {
         System.out.println(" Model: " + cpuInfo.getModel());
     }
 
-    public static void memDisplay() 
-    {
+    public static void memDisplay() {
         double memTotal = memInfo.getTotal() / 1048576;
         double memUsed = memInfo.getUsed() / 1048576;
         double memPer = (memUsed / memTotal) * 100;
@@ -36,8 +35,7 @@ public class display {
         System.out.println(" Percentage Used = " + ftPer + "%");
     }
 
-    public static void cpuDisplay() 
-    {
+    public static void cpuDisplay() {
         System.out.println("----- CPU Info -----");
 
         double[] coreLoads = cpuInfo.fastLoad();
@@ -51,11 +49,10 @@ public class display {
         System.out.println(" Average Load: " + ftload + "%");
     }
 
-    public static void diskDisplay() 
-    {
-        String driveType = diskInfo.getDriveType();
-
+    public static void diskDisplay() {
         System.out.println("----- Disk Info -----");
+
+        String driveType = diskInfo.getDriveType();
         System.out.println(" Disk Type: " + driveType);
     }
 
@@ -72,12 +69,12 @@ public class display {
         pciInfo.sortByBusDeviceFunction();
         pciInfo.displayInfo();
         
+        System.out.println(" Unique PCIe Vendors:");
         pciInfo.displayUniqueVendors();
     }
     
 
-    public static void usbDisplay() throws Exception 
-    {
+    public static void usbDisplay() throws Exception {
         System.out.println("----- USB Info -----");
 
         idLookup usb = idLookup.usb();
