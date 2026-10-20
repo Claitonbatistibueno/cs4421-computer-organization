@@ -53,7 +53,7 @@ public class parallelBench {
         return s.toString();
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         int cores = cpuInfo.getCount();
         int primes = countPrimes(1);
 
@@ -76,7 +76,7 @@ public class parallelBench {
             if (THREADS[i] <= cores) ref = i;
         int n = THREADS[ref];
         double s = time[0] / time[ref];
-        double p = n > 1 ? (1 - 1 / s) / (1 - 1.0 / n) : 1;
+        double p = n > 1 ? Math.min(1, Math.max(0, (1 - 1 / s) / (1 - 1.0 / n))) : 1;
 
         System.out.println("===== MEASURED PERFORMANCE =====");
         System.out.printf("Task: count primes below %,d (%,d found), average of %d runs%n", LIMIT, primes, RUNS);
@@ -93,7 +93,14 @@ public class parallelBench {
                     t, time[i], speedup, String.format("%.0f%%", 100 * speedup / t), amdahl, load[i]);
         }
 
-        System.out.printf("%nMaximum speedup predicted by Amdahl with unlimited cores: %.1fx%n", 1 / (1 - p));
+        System.out.println(p < 1
+                ? String.format("%nMaximum speedup predicted by Amdahl with unlimited cores: %.1fx", 1 / (1 - p))
+                : "\nNo serial part measured, so Amdahl predicts no upper limit.");
         System.out.println("With more threads than cores, the extra threads only share the same cores.");
+
+        double best = 0;
+        for (double t : time) best = Math.max(best, time[0] / t);
+        System.out.println();
+        verdict.print(best);
     }
 }
