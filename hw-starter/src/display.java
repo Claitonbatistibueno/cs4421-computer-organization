@@ -1,56 +1,19 @@
-// Class made by Eoin for displaying info
 
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+// Class made by Eoin for displaying info
 
 public class display {
     public static void main(String[] args) throws Exception { 
 
-        JFrame frame = new JFrame();
-        frame.setSize(1000, 1000);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setBounds(null);
-
-        String[] columns = {"Name", "Data"};
-        Object[][] data = { {"Model", cpuInfo.getModel()}, {"Cores", cpuInfo.getCount()}};
-        DefaultTableModel model = new DefaultTableModel(data, columns);
-        JTable table = new JTable(model);
-
-        frame.add(table);
+        basicDisplay();
+        memDisplay();
+        diskDisplay();
+        cpuDisplay();
     }
-
-    public static void cpuDisplay() throws Exception //Gets the busy & idle time intervals for all cores.
-    {
-        System.out.println("----- CPU Info -----");
-
-        int coreCount = cpuInfo.getCount();
-        int coreBusyStart[] = new int[coreCount];
-        int coreIdleStart[] = new int[coreCount];
-        double averageLoad = 0;
-
-        for (int i = 0; i < coreCount; i++) {
-            coreBusyStart[i] = (int) cpuInfo.getBusy(i);
-            coreIdleStart[i] = (int) cpuInfo.getIdle(i);
-        }
-
-        Thread.sleep(1000); // waits for 1 second
-
-        for (int i = 0; i < coreCount; i++) {
-            double busy = ( cpuInfo.getBusy(i) + coreBusyStart[i] ) /2;
-            double idle = ( cpuInfo.getIdle(i) + coreIdleStart[i] ) /2;
-            double load = 100.0 * busy / (busy + idle);
-            String ftNum = String.format("%02d", i);
-            String ftLoad = String.format("%.2f", load);
-
-            System.out.print("Core " + ftNum + ": ");
-            System.out.println("Load = " + ftLoad + "%");
-            averageLoad += load;
-        }
-        averageLoad /= coreCount;
-        String ftLoad = String.format("%.2f", averageLoad);
-        System.out.println("Average Load = " + ftLoad + "%");
+   
+    public static void basicDisplay() {
+        System.out.println("----- System Info -----");
+        System.out.println(" Cores: " + cpuInfo.getCount());
+        System.out.println(" Model: " + cpuInfo.getModel());
     }
 
     public static void memDisplay() 
@@ -69,6 +32,21 @@ public class display {
         }
         System.out.println(" Memory : Total = " + ftTotal + " GiB || Used = " + ftUsed + " GiB");
         System.out.println(" Percentage Used = " + ftPer + "%");
+    }
+
+    public static void cpuDisplay() 
+    {
+        System.out.println("----- CPU Info -----");
+
+        double[] coreLoads = cpuInfo.fastLoad();
+        for (int i = 0; i < coreLoads.length - 1; i++) {
+            String ftload = String.format("%.2f", coreLoads[i]);
+            String ftNum = String.format("%02d", i);
+            System.out.println(" Core " + ftNum + " Load: " + ftload + "%");
+        }
+
+        String ftload = String.format("%.2f", coreLoads[coreLoads.length - 1]);
+        System.out.println(" Average Load: " + ftload + "%");
     }
 
     public static void diskDisplay() 
@@ -102,5 +80,4 @@ public class display {
                               usb.vendorName(vendor), usb.deviceName(vendor, product));
         }
     }
-
 }

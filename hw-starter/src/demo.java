@@ -9,6 +9,10 @@ public class demo {
     public static void main(String[] args) throws Exception { 
         System.out.println("Cores: " + cpuInfo.getCount());
         System.out.println("Model: " + cpuInfo.getModel());
+        System.out.println("core 0: busy=" + cpuInfo.getBusy(0)
+                + " idle=" + cpuInfo.getIdle(0));
+        System.out.println("memory: total=" + memInfo.getTotal()
+                + " KiB, used=" + memInfo.getUsed() + " KiB");
 
         //Eoin's methods
         // memDisplay();
