@@ -201,25 +201,48 @@ public class pciInfo
     }
 
     public static String getGPU() throws IOException {
-    arrayBuiltChecker();
-    StringBuilder GPU = new StringBuilder();
-    idLookup pci = idLookup.pci();
+        arrayBuiltChecker();
+        StringBuilder GPU = new StringBuilder();
+        idLookup pci = idLookup.pci();
 
-    for (int i = 0; i < pcieDevices.length; i++) {
-        if (pcieDevices[i][5].startsWith("03")) {
-            GPU.append(String.format(
-                "  %s  %s:%s  %s %s  [%s] %s%n",
-                pcieDevices[i][0],
-                pcieDevices[i][1],
-                pcieDevices[i][2],
-                pcieDevices[i][3],
-                pcieDevices[i][4],
-                pcieDevices[i][5],
-                pcieDevices[i][6]
-            ));
+        for (int i = 0; i < pcieDevices.length; i++) {
+            if (pcieDevices[i][5].startsWith("03")) {
+                GPU.append(String.format(
+                    "  %s  %s:%s  %s %s  [%s] %s%n",
+                    pcieDevices[i][0],
+                    pcieDevices[i][1],
+                    pcieDevices[i][2],
+                    pcieDevices[i][3],
+                    pcieDevices[i][4],
+                    pcieDevices[i][5],
+                    pcieDevices[i][6]
+                ));
+            }
         }
+
+        return GPU.isEmpty() ? "No GPUs Found" : GPU.toString();
     }
 
-    return GPU.isEmpty() ? "No GPUs Found" : GPU.toString();
-}
+    public static void displayUniqueClasses() throws IOException {
+        arrayBuiltChecker();
+        ArrayList<String> uniqueClasses = new ArrayList<>();
+        ArrayList<String> classCodes = new ArrayList<>();
+        ArrayList<Integer> quantity = new ArrayList<>();
+        for (String[] device : pcieDevices) {
+            String className = device[6];
+            if (!uniqueClasses.contains(className)) {
+                uniqueClasses.add(className);
+                quantity.add(1);
+                classCodes.add(device[5]);
+            } else {
+                int index = uniqueClasses.indexOf(className);
+                quantity.set(index, quantity.get(index) + 1);
+            }
+        }
+
+        System.out.println("Unique PCIe Classes:");
+        for (int i = 0; i < uniqueClasses.size(); i++) {
+            System.out.println("  " + uniqueClasses.get(i) + " (" + quantity.get(i) + ") [Code: " + classCodes.get(i) + "]");
+        }
+    }
 }

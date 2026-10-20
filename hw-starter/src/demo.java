@@ -41,6 +41,7 @@ public class demo {
         usbInfo.displayUSBInfo();
 
         pciInfo.displayUniqueVendors();
+        pciInfo.displayUniqueClasses();
 
         System.out.println("CPU Load per core:");
         for (int i = 0; i < cpuInfo.getCount(); i++) {
