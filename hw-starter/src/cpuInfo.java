@@ -30,6 +30,7 @@ public class cpuInfo
      * On arm64 there is no model name line, so this returns "unknown"; use
      * getField("CPU part") or getField("CPU implementer") instead.
      */
+    
     public static String getModel()
     {
         String model = getField("model name");
@@ -104,5 +105,36 @@ public class cpuInfo
         }
         totalLoad /= coreCount;
         return totalLoad;
+    }
+
+    public static double[] fastLoad()  //Added by Eoin for faster data collection
+    {
+        int coreCount = cpuInfo.getCount();
+        double coreBusyStarts[] = new double[coreCount];
+        double coreIdleStarts[] = new double[coreCount];
+        double coreLoads[] = new double[coreCount + 1];
+        double averageLoad = 0;
+
+        for (int i = 0; i < coreCount; i++) {
+            coreBusyStarts[i] = (double) cpuInfo.getBusy(i);
+            coreIdleStarts[i] = (double) cpuInfo.getIdle(i);
+        }
+
+        try {          
+            TimeUnit.SECONDS.sleep(1); 
+        } catch (Exception e) {
+            System.err.println("Error calculating load");
+            return null;
+        }
+        for (int i = 0; i < coreCount; i++) {
+            double busy = ( cpuInfo.getBusy(i) + coreBusyStarts[i] ) /2;
+            double idle = ( cpuInfo.getIdle(i) + coreIdleStarts[i] ) /2;
+            double load = 100.0 * busy / (busy + idle);
+            coreLoads[i] = load; 
+            averageLoad += load;
+        }
+        
+        coreLoads[coreLoads.length - 1] = (averageLoad / coreCount); // The last value is the average load
+        return coreLoads;
     }
 }
