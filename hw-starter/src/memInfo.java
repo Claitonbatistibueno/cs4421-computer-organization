@@ -45,9 +45,4 @@ public class memInfo
         return -1;
     }
 
-    public static void displayInfo() {
-        for (String line : sysFile.lines(MEMINFO)) {
-            System.out.println(line);
-        }
-    }
 }
