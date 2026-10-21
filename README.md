@@ -1,10 +1,10 @@
-CS4421 Hardware Inspector
+# CS4421 Hardware Inspector
 
 A Java program that reads information about the computer it runs on and prints it as plain text: processor, memory, disk, PCI devices and USB devices. It also runs a parallelism benchmark and gives a plain-English verdict on what the computer is good for.
 
 All data comes from the text files Linux provides under `/proc` and `/sys`. The program runs from a terminal with no graphical display, so it works on the alderaan cloud server.
 
-Build and run
+# Build and run
 
 Requirements: Linux and Java 17 or newer. Windows (including WSL2) and macOS do not provide the same `/proc` and `/sys` files, so the results there are not reliable.
 
@@ -40,7 +40,7 @@ This takes about 15 seconds, because each test runs 3 times.
 | Vendor, device and class names | `ids/pci.ids` and `ids/usb.ids` (if a name is not found, the raw ID is shown) | `idLookup` |
 | Graphics card | PCI devices with base class `03` (display controller) | `pciInfo` |
 
- What the program reports
+# What the program reports
 
 1. Processor: number of cores, model, load per core and average load.
 2. Memory: total, used and percentage in use (in GiB).
@@ -49,7 +49,7 @@ This takes about 15 seconds, because each test runs 3 times.
 5. Names: IDs are looked up in `pci.ids` and `usb.ids`. Unknown devices show their raw ID.
 6. Analysis: the PCI list is sorted by vendor name and by bus/device/function, with a count of devices per vendor and per class (`displayUniqueVendors`, `displayUniqueClasses`).
 
-Extension: parallelism and Amdahl's law
+# Extension: parallelism and Amdahl's law
 
 The program counts the prime numbers below 5,000,000 using 1, 2, 4 and 8 threads, and measures how much faster it gets.
 
@@ -62,6 +62,6 @@ The work is split into blocks of 10,000 numbers handed out in turn to each threa
 
 With more threads than cores, the extra threads only share the same cores, so the speedup stops growing at the number of cores.
 
-### Verdict: "This computer is good for..."
+# Verdict: "This computer is good for..."
 
 Using the number of cores, total RAM, disk type, whether there is a graphics card, and the measured speedup, the program rates the computer for Study, Programming, Video editing and Gaming as **YES**, **PARTLY** or **NO**, and prints the reason for each threshold.
