@@ -1,7 +1,7 @@
 public class verdict {
 
     record Need(String name, double cores, double ramGiB, boolean ssd, boolean gpu, double speedup, String why) {}
-
+   
     static final Need[] NEEDS = {
         new Need("Study", 2, 4, false, false, 0,
                 "A browser, documents and video calls run well on 2 cores and 4 GiB."),
@@ -12,6 +12,8 @@ public class verdict {
         new Need("Gaming", 4, 16, true, true, 0,
                 "Modern games need a dedicated GPU; without one they do not run well, whatever the CPU.")
     };
+    //Param, there are two booleand working together /  n.gpu() this use need GPU ( true ofr false ) for study is false, because dont need
+    //but for Gaming yes. 
 
     static final double TOLERANCE = 0.9;
 
