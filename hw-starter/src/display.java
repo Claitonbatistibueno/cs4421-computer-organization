@@ -1,21 +1,65 @@
-
 // Class made by Eoin for displaying info
 
-public class display {
-    public static void main(String[] args) throws Exception { 
+import java.util.Scanner;
 
-        basicDisplay();
-        memDisplay();
-        diskDisplay();
-        cpuDisplay();
-        pciDisplay();
-        usbDisplay();
+public class display {
+    public static void main(String[] args) { 
+
+        interact();
+    }
+
+    public static void interact() {
+        Scanner input = new Scanner(System.in);
+        String choiceString = "";
+        int choice = 0;
+
+        System.out.println("----- Choice -----");
+        System.out.println("1. System Stats");
+        System.out.println("2.");
+        System.out.println("3.");
+        System.out.println("4.");
+        System.out.println("5. Exit");
+        System.out.print("->");
+        choiceString = input.next();
+
+        try {
+            choice = Integer.parseInt(choiceString);
+        } catch (Exception e) {
+            System.out.println("Invalid Selection, try again.");
+            interact();
+        }
+
+        if (choice == 1) {
+            try {
+                clear();
+                basicDisplay();
+            } catch (Exception e) {
+                clear();
+                System.out.println("An error occured, try again!");
+                interact();
+            }
+        }
+        else if (choice == 5) {
+            clear();
+            System.out.println("Bye!");
+        }
+
+        else {
+            clear();
+            System.out.println("Invalid Selection, try again.");
+            interact();
+        }
     }
    
     public static void basicDisplay() {
         System.out.println("----- System Info -----");
         System.out.println(" Cores: " + cpuInfo.getCount());
         System.out.println(" Model: " + cpuInfo.getModel());
+        memDisplay();
+        diskDisplay();
+        cpuDisplay();
+        pciDisplay();
+        usbDisplay();
     }
 
     public static void memDisplay() {
@@ -56,29 +100,39 @@ public class display {
         System.out.println(" Disk Type: " + driveType);
     }
 
-    public static void pciDisplay() throws Exception {
-        System.out.println("----- PCI Info -----");
-        System.out.println(" PCI devices: " + pciInfo.getCount());
+    public static void pciDisplay() {
+        try {
+            System.out.println("----- PCI Info -----");
+            System.out.println(" PCI devices: " + pciInfo.getCount());
 
-        pciInfo.arrayBuilderPCIe();
-        System.out.println(" PCI devices sorted by vendor name:");
-        pciInfo.sortByVendorName();
-        pciInfo.displayInfo();
+            pciInfo.arrayBuilderPCIe();
+            System.out.println(" PCI devices sorted by vendor name:");
+            pciInfo.sortByVendorName();
+            pciInfo.displayInfo();
 
-        System.out.println(" PCI devices sorted by bus, device and function:");
-        pciInfo.sortByBusDeviceFunction();
-        pciInfo.displayInfo();
+            System.out.println(" PCI devices sorted by bus, device and function:");
+            pciInfo.sortByBusDeviceFunction();
+            pciInfo.displayInfo();
         
-        System.out.println(" Unique PCIe Vendors:");
-        pciInfo.displayUniqueVendors();
+            System.out.println(" Unique PCIe Vendors:");
+            pciInfo.displayUniqueVendors();
+        } catch (Exception e) {
+            System.out.println("Error, couldn't look up PCIe devices!");
+        }
     }
     
-
-    public static void usbDisplay() throws Exception {
+    public static void usbDisplay() {
         System.out.println("----- USB Info -----");
 
-        idLookup usb = idLookup.usb();
+        idLookup usb;
         int usbCount = usbInfo.getCount();
+
+        try {
+            usb = idLookup.usb();
+        } catch (Exception e) {
+            System.out.println("Error, couldn't look up usb devices!");
+            return;
+        }
 
         if (usbCount <= 0) {
             System.out.println(" No USB devices could be found.");
@@ -95,4 +149,9 @@ public class display {
                               usb.vendorName(vendor), usb.deviceName(vendor, product));
         }
     }
+
+    public static void clear() {  
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }  
 }
