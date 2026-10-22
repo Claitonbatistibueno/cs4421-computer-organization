@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class display {
     public static void main(String[] args) { 
-
         interact();
     }
 
@@ -15,8 +14,8 @@ public class display {
 
         System.out.println("----- Choice -----");
         System.out.println("1. System Stats");
-        System.out.println("2.");
-        System.out.println("3.");
+        System.out.println("2. Parallel Bench");
+        System.out.println("3. Verdict");
         System.out.println("4.");
         System.out.println("5. Exit");
         System.out.print("->");
@@ -31,21 +30,35 @@ public class display {
 
         if (choice == 1) {
             try {
-                clear();
+                 
                 basicDisplay();
             } catch (Exception e) {
-                clear();
+                System.out.println("An error occured, try again!");
+                interact();
+            }
+        }
+        if (choice == 2) {
+            try {
+                parallelBench.main(null);
+            } catch (Exception e) {
+                System.out.println("An error occured, try again!");
+                interact();
+            }
+        }
+        if (choice == 3) {
+            try {
+                verdict.main(null);
+            } catch (Exception e) {
                 System.out.println("An error occured, try again!");
                 interact();
             }
         }
         else if (choice == 5) {
-            clear();
             System.out.println("Bye!");
+            return;
         }
 
         else {
-            clear();
             System.out.println("Invalid Selection, try again.");
             interact();
         }
