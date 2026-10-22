@@ -30,7 +30,6 @@ public class display {
 
         if (choice == 1) {
             try {
-                 
                 basicDisplay();
             } catch (Exception e) {
                 System.out.println("An error occured, try again!");
@@ -39,7 +38,7 @@ public class display {
         }
         if (choice == 2) {
             try {
-                parallelBench.main(null);
+                print(args.length > 0 ? Double.parseDouble(args[0]) : 1);
             } catch (Exception e) {
                 System.out.println("An error occured, try again!");
                 interact();
