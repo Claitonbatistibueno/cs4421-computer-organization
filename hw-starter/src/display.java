@@ -9,7 +9,6 @@ public class display {
     public static void basicDisplay() throws Exception{
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
-        System.out.println("Cores: " + cpuInfo.getCount());
         memDisplay();
         cpuDisplay();
         pciDisplay();
@@ -33,24 +32,25 @@ public class display {
         System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " Gib", ftPer + "%");
     }
 
-    public static void cpuDisplay() {
-
-        String ftLine = "%-10s %-15s %n";
+    public static void cpuDisplay() {    
         double[] coreLoads = cpuInfo.fastLoad();
+        String ftLoads = "";
 
-        System.out.println();
-        System.out.printf(ftLine, "Core (s)", "Load");
-
-        for (int i = 0; i < coreLoads.length - 1; i++) {
-            String ftLoad = String.format("%.2f", coreLoads[i]);
-            System.out.printf(ftLine, " " + i, ftLoad + "%");
+        for (int i = 0; i < coreLoads.length -1; i++) {
+            String ftLoad = String.format("%.0f", coreLoads[i]);
+            ftLoads += "   " + ftLoad + "%"; 
         }
-        
+
         String ftLoad = String.format("%.2f", coreLoads[coreLoads.length - 1]);
 
-        System.out.printf(ftLine, " Average", ftLoad +"%");
         System.out.println();
-    }
+        System.out.println("No. of Cores: " + cpuInfo.getCount());
+        System.out.println("Load per Core: ");
+        System.out.println(ftLoads);
+        System.out.println("Average Load:");
+        System.out.println("   " + ftLoad + "%");
+        System.out.println();
+    }  
 
     public static void diskDisplay() {
         System.out.println("----- Disk Info -----");
