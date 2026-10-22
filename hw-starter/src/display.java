@@ -14,6 +14,7 @@ public class display {
         cpuDisplay();
         pciDisplay();
         usbDisplay();
+        parallelBench.main(null);
     }
 
     public static void memDisplay() {
@@ -35,10 +36,11 @@ public class display {
     public static void cpuDisplay() {
 
         String ftLine = "%-10s %-15s %n";
-        
+        double[] coreLoads = cpuInfo.fastLoad();
+
+        System.out.println();
         System.out.printf(ftLine, "Core (s)", "Load");
 
-        double[] coreLoads = cpuInfo.fastLoad();
         for (int i = 0; i < coreLoads.length - 1; i++) {
             String ftLoad = String.format("%.2f", coreLoads[i]);
             System.out.printf(ftLine, " " + i, ftLoad + "%");
@@ -47,6 +49,7 @@ public class display {
         String ftLoad = String.format("%.2f", coreLoads[coreLoads.length - 1]);
 
         System.out.printf(ftLine, " Average", ftLoad +"%");
+        System.out.println();
     }
 
     public static void diskDisplay() {
