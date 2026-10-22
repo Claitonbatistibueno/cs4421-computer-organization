@@ -3,19 +3,17 @@
 
 public class display {
     public static void main(String[] args) throws Exception { 
-
         basicDisplay();
+    }
+   
+    public static void basicDisplay() throws Exception{
+        System.out.println("==== System Info ====");
+        System.out.println("Model: " + cpuInfo.getModel());
+        System.out.println("Cores: " + cpuInfo.getCount());
         memDisplay();
-        diskDisplay();
         cpuDisplay();
         pciDisplay();
         usbDisplay();
-    }
-   
-    public static void basicDisplay() {
-        System.out.println("----- System Info -----");
-        System.out.println(" Cores: " + cpuInfo.getCount());
-        System.out.println(" Model: " + cpuInfo.getModel());
     }
 
     public static void memDisplay() {
@@ -26,27 +24,29 @@ public class display {
         String ftUsed = String.format("%.2f", memUsed);
         String ftPer = String.format("%.2f", memPer);
 
-        System.out.println("----- Memory Info -----");
         if (memTotal < 0 || memUsed < 0 ) {
-            System.out.println(" Memory not accessed!");
+            System.out.println("Memory couldn't be accessed!");
             return;
         }
-        System.out.println(" Memory : Total = " + ftTotal + " GiB || Used = " + ftUsed + " GiB");
-        System.out.println(" Percentage Used = " + ftPer + "%");
+        System.out.printf("%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
+        System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " Gib", ftPer + "%");
     }
 
     public static void cpuDisplay() {
-        System.out.println("----- CPU Info -----");
+
+        String ftLine = "%-10s %-15s %n";
+        
+        System.out.printf(ftLine, "Core (s)", "Load");
 
         double[] coreLoads = cpuInfo.fastLoad();
         for (int i = 0; i < coreLoads.length - 1; i++) {
-            String ftload = String.format("%.2f", coreLoads[i]);
-            String ftNum = String.format("%02d", i);
-            System.out.println(" Core " + ftNum + " Load: " + ftload + "%");
+            String ftLoad = String.format("%.2f", coreLoads[i]);
+            System.out.printf(ftLine, " " + i, ftLoad + "%");
         }
+        
+        String ftLoad = String.format("%.2f", coreLoads[coreLoads.length - 1]);
 
-        String ftload = String.format("%.2f", coreLoads[coreLoads.length - 1]);
-        System.out.println(" Average Load: " + ftload + "%");
+        System.out.printf(ftLine, " Average", ftLoad +"%");
     }
 
     public static void diskDisplay() {
@@ -57,31 +57,27 @@ public class display {
     }
 
     public static void pciDisplay() throws Exception {
-        System.out.println("----- PCI Info -----");
-        System.out.println(" PCI devices: " + pciInfo.getCount());
+        System.out.println("PCI devices: " + pciInfo.getCount());
 
         pciInfo.arrayBuilderPCIe();
-        System.out.println(" PCI devices sorted by vendor name:");
+        System.out.println("PCI devices sorted by vendor name:");
         pciInfo.sortByVendorName();
         pciInfo.displayInfo();
 
-        System.out.println(" PCI devices sorted by bus, device and function:");
+        System.out.println("PCI devices sorted by bus, device and function:");
         pciInfo.sortByBusDeviceFunction();
         pciInfo.displayInfo();
         
-        System.out.println(" Unique PCIe Vendors:");
+        System.out.println("Unique PCIe Vendors:");
         pciInfo.displayUniqueVendors();
     }
     
-
     public static void usbDisplay() throws Exception {
-        System.out.println("----- USB Info -----");
-
         idLookup usb = idLookup.usb();
         int usbCount = usbInfo.getCount();
 
         if (usbCount <= 0) {
-            System.out.println(" No USB devices could be found.");
+            System.out.println("No USB devices could be found.");
             return;
         }
 
