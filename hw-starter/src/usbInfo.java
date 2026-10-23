@@ -133,6 +133,11 @@ public class usbInfo
         }
     }        
     
+    public static String[][] getDevices() throws IOException {
+        arrayBuilderUSB();
+        return usbDevices;
+    }
+
     public static void displayUSBInfo() {
         for (int i = 0; i < usbDevices.length; i++) {
             System.out.printf(

@@ -4,6 +4,10 @@ import java.util.Scanner;
 
 public class display {
     public static void main(String[] args) throws Exception { 
+        if (args.length == 2 && args[0].equals("--html")) {
+            htmlReport.write(args[1]);
+            return;
+        }
         if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
             basicDisplay();
             parallelBench.main(null);
@@ -50,6 +54,8 @@ public class display {
                     } else {
                         verdict.print(parallelBench.bestSpeedup);
                     }
+                } else if (choice == 4) {
+                    htmlReport.write("report.html");
                 } else if (choice == 5) {
                     System.out.println("Bye!");
                     return;
@@ -90,19 +96,15 @@ public class display {
 
     public static void cpuDisplay() {
         double[] coreLoads = cpuInfo.fastLoad();
-        int coreCount = cpuInfo.getCount();
-        int aveIdle = 0;
-        int aveBusy = 0;
+        int coreCount = cpuInfo.getCount();   // coreLoads[coreCount] is the average load
 
         System.out.printf("%n%s%n","==== CPU ====");
-        System.out.println("No. of Cores: " + cpuInfo.getCount());
-        System.out.printf("%-10s %-8s %-8s %-8s %n", "Core(s)", "Idle", "Busy", "Load");
-        for (int i = 0; i < coreCount -1; i++) {
-            System.out.printf(" %-9d %-8s %-8s %05.2f%% %n", i, cpuInfo.getIdle(i), cpuInfo.getBusy(i),coreLoads[i]);
-            aveIdle +=  (cpuInfo.getIdle(i) / coreCount);
-            aveBusy +=  (cpuInfo.getBusy(i) / coreCount);
+        System.out.println("No. of Cores: " + coreCount);
+        System.out.printf("%-10s %s%n", "Core", "Load");
+        for (int i = 0; i < coreCount; i++) {
+            System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
         }
-        System.out.printf("%-10s %-8s %-8s %05.2f%%%n", "Average", aveIdle, aveBusy, coreLoads[coreCount - 1]);
+        System.out.printf("%-10s %.2f%%%n", "Average", coreLoads[coreCount]);
     }
 
     public static void diskDisplay() {

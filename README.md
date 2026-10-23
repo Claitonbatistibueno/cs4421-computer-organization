@@ -16,15 +16,21 @@ javac -d out src/*.java
 java -cp out display
 ```
 
-`display` prints the main report: system, memory, disk, CPU load, PCI devices and USB devices.
+`display` opens a menu:
 
-To run the extension (parallelism benchmark and verdict):
+1. System Stats: system, memory, disk, CPU load, PCI devices and USB devices
+2. Parallel Bench: the parallelism benchmark and the verdict (extension)
+3. Verdict: the verdict, using the speedup from option 2 (runs the benchmark first if needed)
+4. Export HTML: saves the report as `report.html`
+5. Exit
+
+To print everything at once, without the menu:
 
 ```
-java -cp out parallelBench
+java -cp out display all
 ```
 
-This takes about 15 seconds, because each test runs 3 times.
+The benchmark takes about 15 seconds, because each test runs 3 times.
 
 ## Where each piece of information comes from
 
@@ -65,3 +71,15 @@ With more threads than cores, the extra threads only share the same cores, so th
 # Verdict: "This computer is good for..."
 
 Using the number of cores, total RAM, disk type, whether there is a graphics card, and the measured speedup, the program rates the computer for Study, Programming, Video editing and Gaming as **YES**, **PARTLY** or **NO**, and prints the reason for each threshold.
+
+# Extension: HTML report
+
+The same report can be saved as a web page, to open on your own computer:
+
+```
+cd hw-starter
+javac -d out src/*.java
+java -cp out display --html report.html
+```
+
+This creates `report.html` with the processor, memory, PCI and USB sections as tables. The page uses the same data as the text report, has its CSS inside the file and needs no internet. Without `--html` the program works as before, in text only.
