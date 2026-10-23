@@ -4,6 +4,7 @@ public class parallelBench {
     static final int RUNS = 3;
     static final int CHUNK = 10_000;
     static final int[] THREADS = {1, 2, 4, 8};
+    static double bestSpeedup = 0;
 
     static boolean isPrime(int n) {
         if (n < 2) return false;
@@ -100,6 +101,7 @@ public class parallelBench {
 
         double best = 0;
         for (double t : time) best = Math.max(best, time[0] / t);
+        bestSpeedup = best;
         System.out.println();
         verdict.print(best);
     }

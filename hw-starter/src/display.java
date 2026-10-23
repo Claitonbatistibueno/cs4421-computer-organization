@@ -9,57 +9,54 @@ public class display {
 
     public static void interact() {
         Scanner input = new Scanner(System.in);
-        String choiceString = "";
-        int choice = 0;
 
-        System.out.println("----- Choice -----");
-        System.out.println("1. System Stats");
-        System.out.println("2. Parallel Bench");
-        System.out.println("3. Verdict");
-        System.out.println("4.");
-        System.out.println("5. Exit");
-        System.out.print("->");
-        choiceString = input.next();
+        while (true) {
+            System.out.println("----- Choice -----");
+            System.out.println("1. System Stats");
+            System.out.println("2. Parallel Bench");
+            System.out.println("3. Verdict");
+            System.out.println("4.");
+            System.out.println("5. Exit");
+            System.out.print("->");
 
-        try {
-            choice = Integer.parseInt(choiceString);
-        } catch (Exception e) {
-            System.out.println("Invalid Selection, try again.");
-            interact();
-        }
+            if (!input.hasNext()) {
+                return;
+            }
+            String choiceString = input.next();
+            int choice;
 
-        if (choice == 1) {
             try {
-                basicDisplay();
+                choice = Integer.parseInt(choiceString);
+            } catch (Exception e) {
+                System.out.println("Invalid Selection, try again.");
+                continue;
+            }
+
+            try {
+                if (choice == 1) {
+                    basicDisplay();
+                }
+                else if (choice == 2) {
+                    parallelBench.main(null);
+                }
+                else if (choice == 3) {
+                    if (parallelBench.bestSpeedup == 0) {
+                        System.out.println("Running the benchmark first to measure the speedup...");
+                        parallelBench.main(null);
+                    } else {
+                        verdict.print(parallelBench.bestSpeedup);
+                    }
+                }
+                else if (choice == 5) {
+                    System.out.println("Bye!");
+                    return;
+                }
+                else {
+                    System.out.println("Invalid Selection, try again.");
+                }
             } catch (Exception e) {
                 System.out.println("An error occured, try again!");
-                interact();
             }
-        }
-        if (choice == 2) {
-            try {
-                parallelBench.main(null);
-            } catch (Exception e) {
-                System.out.println("An error occured, try again!");
-                interact();
-            }
-        }
-        if (choice == 3) {
-            try {
-                verdict.main(null);
-            } catch (Exception e) {
-                System.out.println("An error occured, try again!");
-                interact();
-            }
-        }
-        else if (choice == 5) {
-            System.out.println("Bye!");
-            return;
-        }
-
-        else {
-            System.out.println("Invalid Selection, try again.");
-            interact();
         }
     }
    
