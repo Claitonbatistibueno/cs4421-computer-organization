@@ -38,7 +38,7 @@ public class display {
         }
         if (choice == 2) {
             try {
-                print(args.length > 0 ? Double.parseDouble(args[0]) : 1);
+                parallelBench.main();
             } catch (Exception e) {
                 System.out.println("An error occured, try again!");
                 interact();
