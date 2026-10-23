@@ -65,3 +65,15 @@ With more threads than cores, the extra threads only share the same cores, so th
 # Verdict: "This computer is good for..."
 
 Using the number of cores, total RAM, disk type, whether there is a graphics card, and the measured speedup, the program rates the computer for Study, Programming, Video editing and Gaming as **YES**, **PARTLY** or **NO**, and prints the reason for each threshold.
+
+# Extension: HTML report
+
+The same report can be saved as a web page, to open on your own computer:
+
+```
+cd hw-starter
+javac -d out src/*.java
+java -cp out display --html report.html
+```
+
+This creates `report.html` with the processor, memory, PCI and USB sections as tables. The page uses the same data as the text report, has its CSS inside the file and needs no internet. Without `--html` the program works as before, in text only.

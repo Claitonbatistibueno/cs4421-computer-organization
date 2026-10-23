@@ -3,7 +3,11 @@
 import java.util.Scanner;
 
 public class display {
-    public static void main(String[] args) { 
+    public static void main(String[] args) throws Exception { 
+        if (args.length == 2 && args[0].equals("--html")) {
+            htmlReport.write(args[1]);
+            return;
+        }
         interact();
     }
 

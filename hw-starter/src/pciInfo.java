@@ -163,6 +163,11 @@ public class pciInfo
         });
     }
 
+    public static String[][] getDevices() throws IOException {
+        arrayBuiltChecker();
+        return pcieDevices;
+    }
+
     public static void displayInfo() throws IOException {
         arrayBuiltChecker();
         for (int i = 0; i < pcieDevices.length; i++) {
