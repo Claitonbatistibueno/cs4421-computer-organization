@@ -63,8 +63,7 @@ public class htmlReport {
         out.println("</table>");
         out.println("<title>Memory Chart</title>");
         out.println("<style>");
-        out.println(".piechart {");
-        out.println("width: 200px;" + "height: 200px;" + "border-radius: 50%;");
+        out.println(".piechart { width: 200px;" + "height: 200px;" + "border-radius: 50%;");
         out.println("background-image: conic-gradient(red 0deg " + (memPer * 3.6) + "deg, green " + (memPer * 3.6) + "deg 360deg)}");
         out.println("</style>" + "</head>" + "<body>" + "<h3>Memory Chart</h3>");
         out.println("<div class=\"piechart\"></div>" +"</body>");
