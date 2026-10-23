@@ -16,15 +16,21 @@ javac -d out src/*.java
 java -cp out display
 ```
 
-`display` prints the main report: system, memory, disk, CPU load, PCI devices and USB devices.
+`display` opens a menu:
 
-To run the extension (parallelism benchmark and verdict):
+1. System Stats: system, memory, disk, CPU load, PCI devices and USB devices
+2. Parallel Bench: the parallelism benchmark and the verdict (extension)
+3. Verdict: the verdict, using the speedup from option 2 (runs the benchmark first if needed)
+4. Export HTML: saves the report as `report.html`
+5. Exit
+
+To print everything at once, without the menu:
 
 ```
-java -cp out parallelBench
+java -cp out display all
 ```
 
-This takes about 15 seconds, because each test runs 3 times.
+The benchmark takes about 15 seconds, because each test runs 3 times.
 
 ## Where each piece of information comes from
 

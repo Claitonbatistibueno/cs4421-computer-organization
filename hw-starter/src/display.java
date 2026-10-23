@@ -8,18 +8,24 @@ public class display {
             htmlReport.write(args[1]);
             return;
         }
+        if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
+            basicDisplay();
+            parallelBench.main(null);
+            return;
+        }
         interact();
     }
 
     public static void interact() {
+
         Scanner input = new Scanner(System.in);
 
         while (true) {
-            System.out.println("----- Choice -----");
+            System.out.println("==== Options ====");
             System.out.println("1. System Stats");
             System.out.println("2. Parallel Bench");
             System.out.println("3. Verdict");
-            System.out.println("4.");
+            System.out.println("4. Export HTML");
             System.out.println("5. Exit");
             System.out.print("->");
 
@@ -39,23 +45,21 @@ public class display {
             try {
                 if (choice == 1) {
                     basicDisplay();
-                }
-                else if (choice == 2) {
+                } else if (choice == 2) {
                     parallelBench.main(null);
-                }
-                else if (choice == 3) {
+                } else if (choice == 3) {
                     if (parallelBench.bestSpeedup == 0) {
                         System.out.println("Running the benchmark first to measure the speedup...");
                         parallelBench.main(null);
                     } else {
                         verdict.print(parallelBench.bestSpeedup);
                     }
-                }
-                else if (choice == 5) {
+                } else if (choice == 4) {
+                    htmlReport.write("report.html");
+                } else if (choice == 5) {
                     System.out.println("Bye!");
                     return;
-                }
-                else {
+                } else {
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
@@ -87,54 +91,54 @@ public class display {
             return;
         }
         System.out.printf("%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
-        System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " Gib", ftPer + "%");
+        System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " GiB", ftPer + "%");
     }
 
-    public static void cpuDisplay() {    
+    public static void cpuDisplay() {
         double[] coreLoads = cpuInfo.fastLoad();
-        String ftLoads = "";
+        int coreCount = cpuInfo.getCount();   // coreLoads[coreCount] is the average load
 
-        for (int i = 0; i < coreLoads.length -1; i++) {
-            String ftLoad = String.format("%.0f", coreLoads[i]);
-            ftLoads += "   " + ftLoad + "%"; 
+        System.out.printf("%n%s%n","==== CPU ====");
+        System.out.println("No. of Cores: " + coreCount);
+        System.out.printf("%-10s %s%n", "Core", "Load");
+        for (int i = 0; i < coreCount; i++) {
+            System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
         }
-
-        String ftLoad = String.format("%.2f", coreLoads[coreLoads.length - 1]);
-
-        System.out.println();
-        System.out.println("No. of Cores: " + cpuInfo.getCount());
-        System.out.println("Load per Core: ");
-        System.out.println(ftLoads);
-        System.out.println("Average Load:");
-        System.out.println("   " + ftLoad + "%");
-        System.out.println();
-    }  
+        System.out.printf("%-10s %.2f%%%n", "Average", coreLoads[coreCount]);
+    }
 
     public static void diskDisplay() {
         String driveType = diskInfo.getDriveType();
-        System.out.println(" Disk Type: " + driveType);
+        System.out.println("Disk Type: " + driveType);
     }
 
-    public static void pciDisplay() throws Exception {
+    public static void pciDisplay() {
+        System.out.printf("%n%s%n","==== PCIe Devices ====");
         System.out.println("PCI devices: " + pciInfo.getCount());
 
-        pciInfo.arrayBuilderPCIe();
-        System.out.println("PCI devices sorted by vendor name:");
-        pciInfo.sortByVendorName();
-        pciInfo.displayInfo();
+        try {
+            pciInfo.arrayBuilderPCIe();
+            System.out.println("PCI devices sorted by vendor name:");
+            pciInfo.sortByVendorName();
+            pciInfo.displayInfo();
 
-        System.out.println("PCI devices sorted by bus, device and function:");
-        pciInfo.sortByBusDeviceFunction();
-        pciInfo.displayInfo();
+            System.out.println("PCI devices sorted by bus, device and function:");
+            pciInfo.sortByBusDeviceFunction();
+            pciInfo.displayInfo();
         
-        System.out.println("Unique PCIe Vendors:");
-        pciInfo.displayUniqueVendors();
+            System.out.println("Unique PCIe Vendors:");
+            pciInfo.displayUniqueVendors();
+        } catch (Exception e) {
+            System.out.println("Error, couldn't find PCIe devices.");
+        }
+        
     }
     
     public static void usbDisplay() throws Exception {
         idLookup usb = idLookup.usb();
         int usbCount = usbInfo.getCount();
 
+        System.out.printf("%n%s%n","==== USB ====");
         try {
             usb = idLookup.usb();
         } catch (Exception e) {
@@ -158,7 +162,7 @@ public class display {
         }
     }
 
-    public static void clear() {  
+    public static void clear() { 
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }  
