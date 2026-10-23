@@ -29,28 +29,20 @@ public class display {
             System.out.println("5. Exit");
             System.out.print("->");
 
-            if (!input.hasNext()) {
+            int choice = readChoice(input);
+            if (choice == -2) {
                 return;
-            }
-            String choiceString = input.next();
-            int choice;
-
-            try {
-                choice = Integer.parseInt(choiceString);
-            } catch (Exception e) {
-                System.out.println("Invalid Selection, try again.");
-                continue;
             }
 
             try {
                 if (choice == 1) {
-                    basicDisplay();
+                    statsMenu(input);
                 } else if (choice == 2) {
                     parallelBench.main(null);
                 } else if (choice == 3) {
                     if (parallelBench.bestSpeedup == 0) {
-                        System.out.println("Running the benchmark first to measure the speedup...");
-                        parallelBench.main(null);
+                        System.out.println("The verdict needs the measured speedup, so the benchmark runs first.");
+                        parallelBench.main(null);   // prints the verdict at the end
                     } else {
                         verdict.print(parallelBench.bestSpeedup);
                     }
@@ -63,8 +55,56 @@ public class display {
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
-                System.out.println("An error occured, try again!");
+                System.out.println("An error occurred: " + e);
             }
+        }
+    }
+
+    // Submenu for option 1, so each part can be shown on its own
+    public static void statsMenu(Scanner input) throws Exception {
+        while (true) {
+            System.out.println();
+            System.out.println("==== System Stats ====");
+            System.out.println("1. CPU");
+            System.out.println("2. Memory and disk");
+            System.out.println("3. PCI devices");
+            System.out.println("4. USB devices");
+            System.out.println("5. Show all");
+            System.out.println("0. Back");
+            System.out.print("->");
+
+            int choice = readChoice(input);
+            if (choice == -2 || choice == 0) {
+                return;
+            }
+
+            if (choice == 1) {
+                System.out.println("Model: " + cpuInfo.getModel());
+                cpuDisplay();
+            } else if (choice == 2) {
+                memDisplay();
+                diskDisplay();
+            } else if (choice == 3) {
+                pciDisplay();
+            } else if (choice == 4) {
+                usbDisplay();
+            } else if (choice == 5) {
+                basicDisplay();
+            } else {
+                System.out.println("Invalid Selection, try again.");
+            }
+        }
+    }
+
+    // Reads one number from the keyboard: -1 if it is not a number, -2 if the input has ended
+    public static int readChoice(Scanner input) {
+        if (!input.hasNext()) {
+            return -2;
+        }
+        try {
+            return Integer.parseInt(input.next());
+        } catch (NumberFormatException e) {
+            return -1;
         }
     }
    
@@ -108,8 +148,13 @@ public class display {
     }
 
     public static void diskDisplay() {
-        String driveType = diskInfo.getDriveType();
-        System.out.println("Disk Type: " + driveType);
+        String disk = diskInfo.getDiskName();
+        if (disk.isEmpty()) {
+            System.out.println("Disk: no disk found in /sys/block");
+            return;
+        }
+        System.out.println("Disk: " + disk + ", type " + diskInfo.getDriveType()
+                + " (from /sys/block/" + disk + "/queue/rotational)");
     }
 
     public static void pciDisplay() {

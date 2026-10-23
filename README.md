@@ -18,7 +18,7 @@ java -cp out display
 
 `display` opens a menu:
 
-1. System Stats: system, memory, disk, CPU load, PCI devices and USB devices
+1. System Stats: opens a submenu to show the CPU, memory and disk, PCI devices or USB devices on their own, or all of them together
 2. Parallel Bench: the parallelism benchmark and the verdict (extension)
 3. Verdict: the verdict, using the speedup from option 2 (runs the benchmark first if needed)
 4. Export HTML: saves the report as `report.html`
@@ -30,7 +30,7 @@ To print everything at once, without the menu:
 java -cp out display all
 ```
 
-The benchmark takes about 15 seconds, because each test runs 3 times.
+The benchmark takes about 15 seconds, because each test runs 3 times. On a shared server such as alderaan it can take longer, so it prints a line as each test starts.
 
 ## Where each piece of information comes from
 
@@ -40,7 +40,7 @@ The benchmark takes about 15 seconds, because each test runs 3 times.
 | Processor model | `/proc/cpuinfo` (`model name` line) | `cpuInfo` |
 | CPU load per core and average | `/proc/stat` (`cpu0`, `cpu1`, ... lines). The counters are time since boot, so we read them twice, 1 second apart, and use the difference: load = Δbusy ÷ (Δbusy + Δidle) | `cpuInfo` |
 | Total and used memory | `/proc/meminfo` (`MemTotal`, `MemAvailable`) | `memInfo` |
-| Disk type | `/sys/block` | `diskInfo` |
+| Disk type | `/sys/block/<disk>/queue/rotational` (1 = HDD, 0 = SSD) | `diskInfo` |
 | PCI devices (bus, device, function, vendor ID, device ID, class) | `/sys/bus/pci/devices/<address>/` (`vendor`, `device`, `class` files) | `pciInfo` |
 | USB devices (vendor ID, product ID, bus, device number) | `/sys/bus/usb/devices/<device>/` (`idVendor`, `idProduct`, `busnum`, `devnum` files) | `usbInfo` |
 | Vendor, device and class names | `ids/pci.ids` and `ids/usb.ids` (if a name is not found, the raw ID is shown) | `idLookup` |

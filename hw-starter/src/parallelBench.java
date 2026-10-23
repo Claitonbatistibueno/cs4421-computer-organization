@@ -56,6 +56,7 @@ public class parallelBench {
 
     public static void main(String[] args) throws Exception {
         int cores = cpuInfo.getCount();
+        System.out.println("Running the benchmark, this can take a minute on a busy server...");
         int primes = countPrimes(1);
 
         double[] time = new double[THREADS.length];
@@ -68,6 +69,7 @@ public class parallelBench {
                 busy[c] = cpuInfo.getBusy(c);
                 idle[c] = cpuInfo.getIdle(c);
             }
+            System.out.println("  " + THREADS[i] + " thread(s)...");
             time[i] = averageTime(THREADS[i], primes);
             load[i] = coreLoad(busy, idle);
         }

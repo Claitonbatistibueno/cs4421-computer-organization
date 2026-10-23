@@ -121,7 +121,7 @@ public class pciInfo
             pcieDevices[i][6] = pci.className(pciInfo.getClassCode(i));
           
             if (pcieDevices[i][3] == null){
-                pcieDevices[i][3] = "unkown vendor with id: " + (String.format("%04x", vendor));
+                pcieDevices[i][3] = "unknown vendor with id: " + (String.format("%04x", vendor));
             }
             if (pcieDevices[i][4] == null){
                 pcieDevices[i][4] = "Unknown " +  pci.className(getClassCode(i)) + " (" + String.format("%04x", device) + ")";
