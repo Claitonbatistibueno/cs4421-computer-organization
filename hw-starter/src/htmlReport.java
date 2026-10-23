@@ -61,6 +61,12 @@ public class htmlReport {
                 + String.format("%.2f", memUsed) + " GiB</td><td>"
                 + String.format("%.2f", memPer) + "%</td></tr>");
         out.println("</table>");
+        // pie chart: the used part is memPer% of the circle (360 degrees), so memPer * 3.6 degrees
+        double usedDeg = memPer * 3.6;
+        out.println("<h3>Memory Chart</h3>");
+        out.println("<div style=\"width:200px; height:200px; border-radius:50%; background: conic-gradient(red 0deg "
+                + usedDeg + "deg, green " + usedDeg + "deg 360deg)\"></div>");
+        out.println("<p>Red = used, green = free</p>");
     }
 
     public static void pciSection(PrintWriter out) throws Exception {
