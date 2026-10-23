@@ -42,6 +42,11 @@ public class demo {
 
         System.out.println("Unique PCIe Vendors:");
         pciInfo.displayUniqueVendors();
+        pciInfo.displayUniqueClasses();
+
+        System.out.println("Benchmarking CPU");
+        System.out.printf("Raw score: %.2f%n", cpuBench.getRawScore());
+        System.out.printf("CPU SCORE: %.2f%n", cpuBench.getScore());
 
         System.out.println("CPU Load per core:");
         for (int i = 0; i < cpuInfo.getCount(); i++) {
@@ -81,6 +86,8 @@ public class demo {
         averageLoad /= coreCount;
         String ftLoad = String.format("%.2f", averageLoad);
         System.out.println("Average Load = " + ftLoad + "%");
+
+        
     }
 
     public static void memDisplay() 
