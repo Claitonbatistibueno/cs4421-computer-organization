@@ -1,6 +1,4 @@
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,9 +32,72 @@ public class cpuInfo
     public static String getModel()
     {
         String model = getField("model name");
-        return model.isEmpty() ? "unknown" : model;
+         //Flourish:  If the normal CPU model exists get it 
+    if (!model.isEmpty()) {
+        return model;
+    }
+    // Flourish: get the ARM64 info
+    String implementer = getField("CPU implementer");
+    String part = getField("CPU part");
+        // Flourish: Checking if the ARM64 fields are missing
+    if (implementer.isEmpty() && part.isEmpty()) {
+        return "unknown";
+    }
+        //Flourish: added getField() calls and added labels for cleaner output
+
+return "CPU Implementer" + getField("CPU implementer") + "  | CPU Part: " + getField("CPU part");
+
+
+    }
+    // Flourish: Get CPU frequency in MHz
+    //craetinf a method for the frequncy that returns a string
+public static String getFrequency()
+{
+    //calling exisitng getfiels method on the frequency
+    String frequency = getField("cpu MHz");
+//if empty output something
+    if (frequency.isEmpty()) {
+        return "unknown";
+    }
+//print the frequency + the unit
+    return frequency + " MHz";
+}
+// Flourish: Get logical threads 
+//method to get the logical threads
+public static String getLogicalThreads()
+{
+    //set a string varianble on the vallue called from getfield with the siblings param
+    String threads = getField("siblings");
+// prints something if blank (dont think it ever wiil be though)
+    if (threads.isEmpty()) {
+        return "unknown";
+    }
+// return the value read from getFields(siblings)
+    return threads;
+}
+// Flourish: Get physical cores
+// method to get the actual core
+public static String getPhysicalCores()
+{
+    //set a string varianble on the vallue called from getfield with the cores param
+    String cores = getField("cpu cores");
+    return cores;
+}
+// Flourish: check if a hypervisor is beign used
+//crate method
+public static String getHypervisor()
+{
+    //set a string varianble on the vallue called from getfield with the flags param
+
+    String flags = getField("flags");
+//simple yes no detection
+
+    if (flags.contains("hypervisor")) {
+        return "Yes";
     }
 
+    return "No";
+}
     /** The value of the first line in /proc/cpuinfo whose name is exactly 'name', or "". */
     public static String getField(String name)
     {

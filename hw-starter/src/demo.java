@@ -1,14 +1,16 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
-import javax.swing.JFrame;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class demo {
     public static void main(String[] args) throws Exception { 
-        System.out.println("Cores: " + cpuInfo.getCount());
+        System.out.print(("=====PROCESSOR====="));
         System.out.println("Model: " + cpuInfo.getModel());
+        // Flourish: Display CPU frequency
+        System.out.println("Frequency: " + cpuInfo.getFrequency());
+        //Flourish: Display logical thraeds
+        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
+        //Flourish: Display phsyical core with label
+        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        //Flourish: Display Check if a hypervisor is being used
+        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
         System.out.println("core 0: busy=" + cpuInfo.getBusy(0)
                 + " idle=" + cpuInfo.getIdle(0));
         System.out.println("memory: total=" + memInfo.getTotal()
