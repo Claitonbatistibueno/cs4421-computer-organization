@@ -140,6 +140,10 @@ public class display {
 
         System.out.printf("%n%s%n","==== CPU ====");
         System.out.println("No. of Cores: " + coreCount);
+        System.out.println("Frequency: " + cpuInfo.getFrequency());
+        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
+        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         System.out.printf("%-10s %s%n", "Core", "Load");
         for (int i = 0; i < coreCount; i++) {
             System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
