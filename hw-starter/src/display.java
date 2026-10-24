@@ -23,10 +23,9 @@ public class display {
         while (true) {
             System.out.println("==== Options ====");
             System.out.println("1. System Stats");
-            System.out.println("2. Parallel Bench");
-            System.out.println("3. Verdict");
-            System.out.println("4. Export HTML");
-            System.out.println("5. Exit");
+            System.out.println("2. Parallelism & Verdict");
+            System.out.println("3. Export HTML");
+            System.out.println("4. Exit");
             System.out.print("->");
 
             if (!input.hasNext()) {
@@ -49,18 +48,10 @@ public class display {
                 } else if (choice == 2) {
                     clear();
                     parallelBench.main(null);
-                } else if (choice == 3) {
-                    clear();
-                    if (parallelBench.bestSpeedup == 0) {
-                        System.out.println("Running the benchmark first to measure the speedup...");
-                        parallelBench.main(null);
-                    } else {
-                        verdict.print(parallelBench.bestSpeedup);
-                    }
-                } else if (choice == 4) {
+                }  else if (choice == 3) {
                     clear();
                     htmlReport.write("report.html");
-                } else if (choice == 5) {
+                } else if (choice == 4) {
                     System.out.println("Bye!");
                     return;
                 } else {
