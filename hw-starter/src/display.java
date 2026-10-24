@@ -44,10 +44,13 @@ public class display {
 
             try {
                 if (choice == 1) {
+                    clear();
                     basicDisplay();
                 } else if (choice == 2) {
+                    clear();
                     parallelBench.main(null);
                 } else if (choice == 3) {
+                    clear();
                     if (parallelBench.bestSpeedup == 0) {
                         System.out.println("Running the benchmark first to measure the speedup...");
                         parallelBench.main(null);
@@ -55,6 +58,7 @@ public class display {
                         verdict.print(parallelBench.bestSpeedup);
                     }
                 } else if (choice == 4) {
+                    clear();
                     htmlReport.write("report.html");
                 } else if (choice == 5) {
                     System.out.println("Bye!");
@@ -71,8 +75,12 @@ public class display {
     public static void basicDisplay() throws Exception{
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
-        memDisplay();
+        System.out.println("Frequency: " + cpuInfo.getFrequency());
+        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
+        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
         diskDisplay();
+        memDisplay();
         cpuDisplay();
         pciDisplay();
         usbDisplay();
@@ -90,7 +98,7 @@ public class display {
             System.out.println("Memory couldn't be accessed!");
             return;
         }
-        System.out.printf("%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
+        System.out.printf("%n%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
         System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " GiB", ftPer + "%");
     }
 
