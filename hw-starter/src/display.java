@@ -23,10 +23,9 @@ public class display {
         while (true) {
             System.out.println("==== Options ====");
             System.out.println("1. System Stats");
-            System.out.println("2. Parallel Bench");
-            System.out.println("3. Verdict");
-            System.out.println("4. Export HTML");
-            System.out.println("5. Exit");
+            System.out.println("2. Parallelism & Verdict");
+            System.out.println("3. Export HTML");
+            System.out.println("4. Exit");
             System.out.print("->");
 
             if (!input.hasNext()) {
@@ -44,19 +43,15 @@ public class display {
 
             try {
                 if (choice == 1) {
+                    clear();
                     basicDisplay();
                 } else if (choice == 2) {
+                    clear();
                     parallelBench.main(null);
-                } else if (choice == 3) {
-                    if (parallelBench.bestSpeedup == 0) {
-                        System.out.println("Running the benchmark first to measure the speedup...");
-                        parallelBench.main(null);
-                    } else {
-                        verdict.print(parallelBench.bestSpeedup);
-                    }
-                } else if (choice == 4) {
+                }  else if (choice == 3) {
+                    clear();
                     htmlReport.write("report.html");
-                } else if (choice == 5) {
+                } else if (choice == 4) {
                     System.out.println("Bye!");
                     return;
                 } else {
@@ -71,8 +66,12 @@ public class display {
     public static void basicDisplay() throws Exception{
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
-        memDisplay();
+        System.out.println("Frequency: " + cpuInfo.getFrequency());
+        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
+        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
         diskDisplay();
+        memDisplay();
         cpuDisplay();
         pciDisplay();
         usbDisplay();
@@ -90,7 +89,7 @@ public class display {
             System.out.println("Memory couldn't be accessed!");
             return;
         }
-        System.out.printf("%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
+        System.out.printf("%n%-15s %-15s %-15s %n", "Memory Total", "Memory Used", "Percentage Used");
         System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " GiB", ftPer + "%");
     }
 
