@@ -1,7 +1,7 @@
 
 public class demo {
     public static void main(String[] args) throws Exception { 
-        System.out.print(("=====PROCESSOR====="));
+        System.out.println(("=====PROCESSOR====="));
         System.out.println("Model: " + cpuInfo.getModel());
         // Flourish: Display CPU frequency
         System.out.println("Frequency: " + cpuInfo.getFrequency());
