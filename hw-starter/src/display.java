@@ -103,7 +103,15 @@ public class display {
         for (int i = 0; i < coreCount; i++) {
             System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
         }
-        System.out.printf("%-10s %.2f%%%n", "Average", coreLoads[coreCount]);
+        System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
+        System.out.println("Benchmarking CPU:");
+        try {
+            System.out.printf(" Raw score: %.2f%n", cpuBench.getRawScore());
+            System.out.printf(" CPU Score: %.2f%n", cpuBench.getScore());
+        } catch (Exception e) {
+            System.out.println("Error!");
+        }
+        
     }
 
     public static void diskDisplay() {
