@@ -117,14 +117,21 @@ public class pciInfo
             pcieDevices[i][2] = String.format("%04x", device);
             pcieDevices[i][3] = pci.vendorName(vendor);
             pcieDevices[i][4] = pci.deviceName(vendor, device);
-            pcieDevices[i][5] = String.format("%06x", pciInfo.getClassCode(i));
-            pcieDevices[i][6] = pci.className(pciInfo.getClassCode(i));
-          
+            int classCode = pciInfo.getClassCode(i);
+            String className = pci.className(classCode);
+            pcieDevices[i][5] = String.format("%06x", classCode);
+            pcieDevices[i][6] = className;
+
             if (pcieDevices[i][3] == null){
-                pcieDevices[i][3] = "unkown vendor with id: " + (String.format("%04x", vendor));
+                pcieDevices[i][3] = "unknown vendor with id: " + (String.format("%04x", vendor));
+            }
+            // class not in pci.ids: keep the raw base and sub class code (first 4 hex digits)
+            if (className == null){
+                pcieDevices[i][6] = "Unknown class (" + String.format("%04x", classCode >> 8) + ")";
             }
             if (pcieDevices[i][4] == null){
-                pcieDevices[i][4] = "Unknown " +  pci.className(getClassCode(i)) + " (" + String.format("%04x", device) + ")";
+                String kind = (className == null) ? "device" : className;
+                pcieDevices[i][4] = "Unknown " + kind + " (" + String.format("%04x", device) + ")";
             }
         }
         arrayBuilt = true;
