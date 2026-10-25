@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.zip.*;
 
 public class cpuBench {
+    // The raw score this benchmark gave on a team member's laptop. Dividing by it gives a
+    // simple scale: 1.00 means as fast as that laptop, 0.50 means half its speed.
     private static final double REFERENCE_SCORE = 578.28;
     private static final int RUNS = 5;
     private static final int SIZE = 16 * 1024 * 1024;

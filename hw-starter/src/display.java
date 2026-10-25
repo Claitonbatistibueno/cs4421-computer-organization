@@ -109,12 +109,13 @@ public class display {
             }
             System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
         }
-        System.out.println("Benchmarking CPU:");
+        // the benchmark takes a few seconds the first time, then the result is kept
+        System.out.println("Benchmarking CPU (SHA-256 and zip on 16 MiB of data, a few seconds the first time)...");
         try {
-            System.out.printf(" Raw score: %.2f%n", cpuBench.getRawScore());
-            System.out.printf(" CPU Score: %.2f%n", cpuBench.getScore());
+            System.out.printf(" Raw score: %.2f MiB/s%n", cpuBench.getRawScore());
+            System.out.printf(" CPU Score: %.2f (1.00 = reference laptop)%n", cpuBench.getScore());
         } catch (Exception e) {
-            System.out.println("Error!");
+            System.out.println("Error, the CPU benchmark could not run.");
         }
         
     }
