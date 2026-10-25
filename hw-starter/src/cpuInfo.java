@@ -148,11 +148,12 @@ public static String getHypervisor()
             TimeUnit.SECONDS.sleep(1); 
             busy = (cpuInfo.getBusy(core) - busy);
             idle = (cpuInfo.getIdle(core) - idle);
-            long total = busy + idle;   
-            double loadPercentage = (double) busy / total * 100;
-
-            
-            return loadPercentage;
+            long total = busy + idle;
+            // no ticks counted (core missing from /proc/stat): avoid dividing by zero
+            if (total <= 0) {
+                return 0.0;
+            }
+            return (double) busy / total * 100;
         } catch (Exception e) {
             System.err.println("Error calculating load for core " + core + ": " + e.getMessage());
             return 0.0;
@@ -162,6 +163,9 @@ public static String getHypervisor()
     public static double allCoresLoad() {
         int coreCount = cpuInfo.getCount();
         double totalLoad = 0.0;
+        if (coreCount == 0) {
+            return 0.0;
+        }
         for (int i = 0; i < coreCount; i++) {
             totalLoad += perCoreLoad(i);
         }
@@ -190,12 +194,14 @@ public static String getHypervisor()
         for (int i = 0; i < coreCount; i++) {
             double busy = ( cpuInfo.getBusy(i) - coreBusyStarts[i] );
             double idle = ( cpuInfo.getIdle(i) - coreIdleStarts[i] );
-            double load = 100.0 * busy / (busy + idle);
-            coreLoads[i] = load; 
+            // no ticks counted (core missing from /proc/stat): avoid dividing by zero
+            double load = (busy + idle > 0) ? 100.0 * busy / (busy + idle) : 0;
+            coreLoads[i] = load;
             averageLoad += load;
         }
-        
-        coreLoads[coreLoads.length - 1] = (averageLoad / coreCount); // The last value is the average load
+
+        // The last value is the average load (0 when no cores could be read)
+        coreLoads[coreLoads.length - 1] = (coreCount > 0) ? averageLoad / coreCount : 0;
         return coreLoads;
     }
 }

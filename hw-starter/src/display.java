@@ -99,11 +99,16 @@ public class display {
 
         System.out.printf("%n%s%n","==== CPU ====");
         System.out.println("No. of Cores: " + coreCount);
-        System.out.printf("%-10s %s%n", "Core", "Load");
-        for (int i = 0; i < coreCount; i++) {
-            System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
+        if (coreCount == 0) {
+            System.out.println("CPU load couldn't be measured (no cores found in /proc/cpuinfo).");
+            System.out.println();
+        } else {
+            System.out.printf("%-10s %s%n", "Core", "Load");
+            for (int i = 0; i < coreCount; i++) {
+                System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
+            }
+            System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
         }
-        System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
         System.out.println("Benchmarking CPU:");
         try {
             System.out.printf(" Raw score: %.2f%n", cpuBench.getRawScore());

@@ -44,6 +44,11 @@ public class htmlReport {
         out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor() + "<br>");
         out.println("Cores: " + cpuInfo.getCount() + "</p>");
 
+        if (last == 0) {   // no cores, so only the average slot exists
+            out.println("<p>CPU load couldn't be measured (no cores found in /proc/cpuinfo).</p>");
+            return;
+        }
+
         out.println("<table><tr><th>Core</th><th>Load</th><th></th></tr>");
         for (int i = 0; i < last; i++) {
             String load = String.format("%.0f", coreLoads[i]);
