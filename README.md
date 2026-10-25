@@ -6,7 +6,7 @@ All data comes from the text files Linux provides under `/proc` and `/sys`. The 
 
 # Build and run
 
-Requirements: Linux and Java 17 or newer. Windows (including WSL2) and macOS do not provide the same `/proc` and `/sys` files, so the results there are not reliable.
+Requirements: Linux and Java 17 or newer. WSL2 runs a real Linux kernel, so the program works there, but it only sees the hardware of the WSL2 virtual machine (usually no PCI or USB devices). Windows and macOS do not have `/proc` and `/sys`, so the program cannot read the hardware there.
 
 Run every command from the `hw-starter` folder, so the program can find the `ids` folder:
 
@@ -18,11 +18,10 @@ java -cp out display
 
 `display` opens a menu:
 
-1. System Stats: system, memory, disk, CPU load, PCI devices and USB devices
-2. Parallel Bench: the parallelism benchmark and the verdict (extension)
-3. Verdict: the verdict, using the speedup from option 2 (runs the benchmark first if needed)
-4. Export HTML: saves the report as `report.html`
-5. Exit
+1. System Stats: processor details, disk, memory, CPU load, CPU benchmark score, PCI devices and USB devices
+2. Parallelism & Verdict: the parallelism benchmark, followed by the verdict (extension)
+3. Export HTML: saves the report as `report.html` in the `hw-starter` folder (extension)
+4. Exit
 
 To print everything at once, without the menu:
 
@@ -30,17 +29,19 @@ To print everything at once, without the menu:
 java -cp out display all
 ```
 
-The benchmark takes about 15 seconds, because each test runs 3 times.
+Option 1 takes about 5 seconds: 1 second to measure the CPU load and about 4 seconds for the CPU benchmark (only the first time it is chosen). Option 2 takes about 10 to 15 seconds, because each test runs 3 times.
 
 ## Where each piece of information comes from
 
 | Information | Source file | Class |
 | --- | --- | --- |
 | Number of cores | `/proc/cpuinfo` (counts the `processor` lines) | `cpuInfo` |
-| Processor model | `/proc/cpuinfo` (`model name` line) | `cpuInfo` |
+| Processor model | `/proc/cpuinfo` (`model name` line). On arm64 there is no such line, so the `CPU implementer` and `CPU part` numbers are shown instead | `cpuInfo` |
+| Frequency, logical threads, physical cores | `/proc/cpuinfo` (`cpu MHz`, `siblings`, `cpu cores` lines; shown as unknown when missing, as on arm64) | `cpuInfo` |
+| Running in a virtual machine | `/proc/cpuinfo` (`flags` line contains `hypervisor`) | `cpuInfo` |
 | CPU load per core and average | `/proc/stat` (`cpu0`, `cpu1`, ... lines). The counters are time since boot, so we read them twice, 1 second apart, and use the difference: load = Δbusy ÷ (Δbusy + Δidle) | `cpuInfo` |
 | Total and used memory | `/proc/meminfo` (`MemTotal`, `MemAvailable`) | `memInfo` |
-| Disk type | `/sys/block` | `diskInfo` |
+| Disk type | `/sys/block/<disk>/queue/rotational` of the first real disk (loop, ram, CD, floppy and similar devices are skipped): 0 = SSD, 1 = HDD | `diskInfo` |
 | PCI devices (bus, device, function, vendor ID, device ID, class) | `/sys/bus/pci/devices/<address>/` (`vendor`, `device`, `class` files) | `pciInfo` |
 | USB devices (vendor ID, product ID, bus, device number) | `/sys/bus/usb/devices/<device>/` (`idVendor`, `idProduct`, `busnum`, `devnum` files) | `usbInfo` |
 | Vendor, device and class names | `ids/pci.ids` and `ids/usb.ids` (if a name is not found, the raw ID is shown) | `idLookup` |
@@ -48,12 +49,12 @@ The benchmark takes about 15 seconds, because each test runs 3 times.
 
 # What the program reports
 
-1. Processor: number of cores, model, load per core and average load.
+1. Processor: number of cores, model, frequency, threads, physical cores, whether it runs in a virtual machine, load per core and average load.
 2. Memory: total, used and percentage in use (in GiB).
-3. PCI devices: every device with its address, vendor and device IDs and names, and its class, stored in an array.
+3. PCI devices: every device with its address (domain:bus:device.function), vendor and device IDs and names, and its class, stored in an array. If there are none (common on WSL2), the program says so.
 4. USB devices: every device with its vendor and product IDs, stored in an array. If there are none (common on virtual machines and the cloud server), the program says so.
 5. Names: IDs are looked up in `pci.ids` and `usb.ids`. Unknown devices show their raw ID.
-6. Analysis: the PCI list is sorted by vendor name and by bus/device/function, with a count of devices per vendor and per class (`displayUniqueVendors`, `displayUniqueClasses`).
+6. Analysis: the PCI list is sorted by vendor name and by bus/device/function, with a count of devices per vendor and per class (`displayUniqueVendors`, `displayUniqueClasses`). Both counts appear in the text report and in the HTML report.
 
 # Extension: parallelism and Amdahl's law
 
@@ -71,6 +72,12 @@ With more threads than cores, the extra threads only share the same cores, so th
 # Verdict: "This computer is good for..."
 
 Using the number of cores, total RAM, disk type, whether there is a graphics card, and the measured speedup, the program rates the computer for Study, Programming, Video editing and Gaming as **YES**, **PARTLY** or **NO**, and prints the reason for each threshold.
+
+In a virtual machine (such as alderaan or WSL2) the disk is a file on the host, so the SSD or HDD value is whatever the virtual machine reports, not the real drive. The program prints a note when this happens.
+
+# CPU benchmark score
+
+Option 1 also shows a single-core CPU score (`cpuBench`). It fills 16 MiB with random data, then measures how fast it can hash it with SHA-256 and compress and decompress it with zip. After 2 warm-up runs it takes the average of 5 runs, in MiB per second: this is the raw score. The CPU score is the raw score divided by a reference value of 578.28, so 1.00 means the same speed as the reference.
 
 # Extension: HTML report
 

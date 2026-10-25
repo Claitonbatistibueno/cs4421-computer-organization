@@ -115,13 +115,23 @@ public class display {
     }
 
     public static void diskDisplay() {
-        String driveType = diskInfo.getDriveType();
-        System.out.println("Disk Type: " + driveType);
+        String diskName = diskInfo.getDiskName();
+        if (diskName.isEmpty()) {
+            System.out.println("Disk Type: unknown (no disk found in /sys/block)");
+            return;
+        }
+        System.out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ")");
     }
 
     public static void pciDisplay() {
         System.out.printf("%n%s%n","==== PCIe Devices ====");
         System.out.println("PCI devices: " + pciInfo.getCount());
+
+        // WSL2 and some virtual machines show no PCI devices at all
+        if (pciInfo.getCount() == 0) {
+            System.out.println("No PCI devices could be found.");
+            return;
+        }
 
         try {
             pciInfo.arrayBuilderPCIe();
@@ -135,38 +145,33 @@ public class display {
         
             System.out.println("Unique PCIe Vendors:");
             pciInfo.displayUniqueVendors();
+
+            pciInfo.displayUniqueClasses();
         } catch (Exception e) {
             System.out.println("Error, couldn't find PCIe devices.");
         }
         
     }
     
-    public static void usbDisplay() throws Exception {
-        idLookup usb = idLookup.usb();
+    public static void usbDisplay() {
         int usbCount = usbInfo.getCount();
 
         System.out.printf("%n%s%n","==== USB ====");
-        try {
-            usb = idLookup.usb();
-        } catch (Exception e) {
-            System.out.println("Error, couldn't look up usb devices!");
-            return;
-        }
-
         if (usbCount <= 0) {
             System.out.println("No USB devices could be found.");
             return;
         }
 
-        System.out.println("USB devices: " + usbInfo.getCount());
-        for (int i = 0; i < usbInfo.getCount(); i++) {
-            int vendor = usbInfo.getVendorId(i);
-            int product = usbInfo.getProductId(i);
-
-            System.out.printf("  Bus %03d Device %03d: ID %04x:%04x  %s %s%n", usbInfo.getBusNumber(i),
-                              usbInfo.getDeviceNumber(i), vendor, product,
-                              usb.vendorName(vendor), usb.deviceName(vendor, product));
+        // the array from usbInfo already shows the raw ID when a name is not in usb.ids
+        try {
+            usbInfo.getDevices();
+        } catch (Exception e) {
+            System.out.println("Error, couldn't look up usb devices!");
+            return;
         }
+
+        System.out.println("USB devices: " + usbCount);
+        usbInfo.displayUSBInfo();
     }
 
     public static void clear() { 

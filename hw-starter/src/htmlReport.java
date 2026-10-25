@@ -76,6 +76,11 @@ public class htmlReport {
     public static void pciSection(PrintWriter out) throws Exception {
         out.println("<h2>PCI devices (" + pciInfo.getCount() + ")</h2>");
 
+        if (pciInfo.getCount() == 0) {
+            out.println("<p>No PCI devices could be found.</p>");
+            return;
+        }
+
         pciInfo.sortByVendorName();
         out.println("<h3>Sorted by vendor name</h3>");
         pciTable(out, pciInfo.getDevices());
