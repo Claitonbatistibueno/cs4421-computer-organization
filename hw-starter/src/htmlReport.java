@@ -41,8 +41,13 @@ public class htmlReport {
         out.println("Frequency: " + cpuInfo.getFrequency() + "<br>");
         out.println("Logical threads per package: " + cpuInfo.getLogicalThreads() + "<br>");
         out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "<br>");
-        out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor() + "<br>");
+        out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor() + "<br>");
         out.println("Cores: " + cpuInfo.getCount() + "</p>");
+
+        if (last == 0) {   // no cores, so only the average slot exists
+            out.println("<p>CPU load couldn't be measured (no cores found in /proc/cpuinfo).</p>");
+            return;
+        }
 
         out.println("<table><tr><th>Core</th><th>Load</th><th></th></tr>");
         for (int i = 0; i < last; i++) {
@@ -60,6 +65,11 @@ public class htmlReport {
         double memPer = (memUsed / memTotal) * 100;
 
         out.println("<h2>Memory</h2>");
+        // same check as the text report: -1 means /proc/meminfo could not be read
+        if (memTotal <= 0 || memUsed < 0) {
+            out.println("<p>Memory couldn't be accessed!</p>");
+            return;
+        }
         out.println("<table><tr><th>Total</th><th>Used</th><th>Percentage used</th></tr>");
         out.println("<tr><td>" + String.format("%.2f", memTotal) + " GiB</td><td>"
                 + String.format("%.2f", memUsed) + " GiB</td><td>"

@@ -58,7 +58,7 @@ public class display {
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
-                System.out.println("An error occured, try again!");
+                System.out.println("An error occurred, try again!");
             }
         }
     }
@@ -69,7 +69,7 @@ public class display {
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
-        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
+        System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
         memDisplay();
         cpuDisplay();
@@ -99,17 +99,23 @@ public class display {
 
         System.out.printf("%n%s%n","==== CPU ====");
         System.out.println("No. of Cores: " + coreCount);
-        System.out.printf("%-10s %s%n", "Core", "Load");
-        for (int i = 0; i < coreCount; i++) {
-            System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
+        if (coreCount == 0) {
+            System.out.println("CPU load couldn't be measured (no cores found in /proc/cpuinfo).");
+            System.out.println();
+        } else {
+            System.out.printf("%-10s %s%n", "Core", "Load");
+            for (int i = 0; i < coreCount; i++) {
+                System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
+            }
+            System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
         }
-        System.out.printf("%-10s %.2f%%%n%n", "Average", coreLoads[coreCount]);
-        System.out.println("Benchmarking CPU:");
+        // the benchmark takes a few seconds the first time, then the result is kept
+        System.out.println("Benchmarking CPU (SHA-256 and zip on 16 MiB of data, a few seconds the first time)...");
         try {
-            System.out.printf(" Raw score: %.2f%n", cpuBench.getRawScore());
-            System.out.printf(" CPU Score: %.2f%n", cpuBench.getScore());
+            System.out.printf(" Raw score: %.2f MiB/s%n", cpuBench.getRawScore());
+            System.out.printf(" CPU Score: %.2f (1.00 = reference laptop)%n", cpuBench.getScore());
         } catch (Exception e) {
-            System.out.println("Error!");
+            System.out.println("Error, the CPU benchmark could not run.");
         }
         
     }

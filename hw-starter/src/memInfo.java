@@ -14,10 +14,21 @@ public class memInfo
         return field("MemTotal");
     }
 
-    /** Memory that programs could use right now (free plus easily reclaimed), in KiB. */
+    /**
+     * Memory that programs could use right now (free plus easily reclaimed), in KiB.
+     * MemAvailable only exists since Linux 3.14. On older kernels we add up MemFree,
+     * Buffers and Cached instead, which is a close estimate of the same thing.
+     */
     public static double getAvailable()
     {
-        return field("MemAvailable");
+        double available = field("MemAvailable");
+        if (available >= 0)
+            return available;
+
+        double free = field("MemFree");
+        if (free < 0)
+            return -1;
+        return free + Math.max(0, field("Buffers")) + Math.max(0, field("Cached"));
     }
 
     /** Memory in use in KiB: total minus available. */
