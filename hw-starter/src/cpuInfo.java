@@ -46,59 +46,49 @@ public class cpuInfo
         return "CPU implementer: " + (implementer.isEmpty() ? "unknown" : implementer)
              + " | CPU part: " + (part.isEmpty() ? "unknown" : part);
     }
-    // Flourish: Get CPU frequency in MHz
-    //craetinf a method for the frequncy that returns a string
-public static String getFrequency()
-{
-    //calling exisitng getfiels method on the frequency
-    String frequency = getField("cpu MHz");
-//if empty output something
-    if (frequency.isEmpty()) {
-        return "unknown";
-    }
-//print the frequency + the unit
-    return frequency + " MHz";
-}
-// Flourish: Get logical threads 
-//method to get the logical threads
-public static String getLogicalThreads()
-{
-    //set a string varianble on the vallue called from getfield with the siblings param
-    String threads = getField("siblings");
-// prints something if blank (dont think it ever wiil be though)
-    if (threads.isEmpty()) {
-        return "unknown";
-    }
-// return the value read from getFields(siblings)
-    return threads;
-}
-// Flourish: Get physical cores
-// method to get the actual core
-public static String getPhysicalCores()
-{
-    //set a string varianble on the vallue called from getfield with the cores param
-    String cores = getField("cpu cores");
-    // arm64 has no "cpu cores" line
-    if (cores.isEmpty()) {
-        return "unknown";
-    }
-    return cores;
-}
-// Flourish: check if a hypervisor is beign used
-//crate method
-public static String getHypervisor()
-{
-    //set a string varianble on the vallue called from getfield with the flags param
-
-    String flags = getField("flags");
-//simple yes no detection
-
-    if (flags.contains("hypervisor")) {
-        return "Yes";
+    // Flourish: CPU frequency in MHz, from the "cpu MHz" line
+    public static String getFrequency()
+    {
+        String frequency = getField("cpu MHz");
+        // arm64 has no "cpu MHz" line
+        if (frequency.isEmpty()) {
+            return "unknown";
+        }
+        return frequency + " MHz";
     }
 
-    return "No";
-}
+    // Flourish: logical threads per package, from the "siblings" line
+    // (with hyper-threading this is twice the number of physical cores)
+    public static String getLogicalThreads()
+    {
+        String threads = getField("siblings");
+        if (threads.isEmpty()) {
+            return "unknown";
+        }
+        return threads;
+    }
+
+    // Flourish: physical cores per package, from the "cpu cores" line
+    public static String getPhysicalCores()
+    {
+        String cores = getField("cpu cores");
+        // arm64 has no "cpu cores" line
+        if (cores.isEmpty()) {
+            return "unknown";
+        }
+        return cores;
+    }
+
+    // Flourish: the "flags" line contains the word hypervisor when Linux runs inside
+    // a virtual machine (for example alderaan or WSL2)
+    public static String getHypervisor()
+    {
+        String flags = getField("flags");
+        if (flags.contains("hypervisor")) {
+            return "Yes";
+        }
+        return "No";
+    }
     /** The value of the first line in /proc/cpuinfo whose name is exactly 'name', or "". */
     public static String getField(String name)
     {

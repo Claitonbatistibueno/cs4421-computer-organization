@@ -5,12 +5,12 @@ public class demo {
         System.out.println("Model: " + cpuInfo.getModel());
         // Flourish: Display CPU frequency
         System.out.println("Frequency: " + cpuInfo.getFrequency());
-        //Flourish: Display logical thraeds
+        //Flourish: Display logical threads
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
-        //Flourish: Display phsyical core with label
+        //Flourish: Display physical cores with label
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
         //Flourish: Display Check if a hypervisor is being used
-        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
+        System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         System.out.println("core 0: busy=" + cpuInfo.getBusy(0)
                 + " idle=" + cpuInfo.getIdle(0));
         System.out.println("memory: total=" + memInfo.getTotal()

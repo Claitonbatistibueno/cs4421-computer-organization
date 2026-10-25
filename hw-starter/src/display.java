@@ -58,7 +58,7 @@ public class display {
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
-                System.out.println("An error occured, try again!");
+                System.out.println("An error occurred, try again!");
             }
         }
     }
@@ -69,7 +69,7 @@ public class display {
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
-        System.out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor());
+        System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
         memDisplay();
         cpuDisplay();

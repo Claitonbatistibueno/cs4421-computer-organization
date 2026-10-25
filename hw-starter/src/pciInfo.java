@@ -98,9 +98,9 @@ public class pciInfo
     }
 
     private static String[][] pcieDevices =
-            new String[pciInfo.getCount()][6];
+            new String[pciInfo.getCount()][7];
 
-    // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name, 5 - Class
+    // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name, 5 - Class code, 6 - Class name
     private static boolean arrayBuilt = false;
 
     public static void arrayBuilderPCIe() throws IOException {
@@ -138,10 +138,9 @@ public class pciInfo
     }
 
     private static void arrayBuiltChecker() throws IOException {
-                if (arrayBuilt == false) {
-                    arrayBuilderPCIe();
-                }
-                //System.out.println("Array built: " + arrayBuilt);
+        if (arrayBuilt == false) {
+            arrayBuilderPCIe();
+        }
     }
 
     public static void sortByVendorName() throws IOException {
