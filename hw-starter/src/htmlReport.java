@@ -60,6 +60,11 @@ public class htmlReport {
         double memPer = (memUsed / memTotal) * 100;
 
         out.println("<h2>Memory</h2>");
+        // same check as the text report: -1 means /proc/meminfo could not be read
+        if (memTotal <= 0 || memUsed < 0) {
+            out.println("<p>Memory couldn't be accessed!</p>");
+            return;
+        }
         out.println("<table><tr><th>Total</th><th>Used</th><th>Percentage used</th></tr>");
         out.println("<tr><td>" + String.format("%.2f", memTotal) + " GiB</td><td>"
                 + String.format("%.2f", memUsed) + " GiB</td><td>"
