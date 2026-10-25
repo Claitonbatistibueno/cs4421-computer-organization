@@ -20,7 +20,7 @@ java -cp out display
 
 1. System Stats: processor details, disk, memory, CPU load, CPU benchmark score, PCI devices and USB devices
 2. Parallelism & Verdict: the parallelism benchmark, followed by the verdict (extension)
-3. Export HTML: saves the report as `report.html` in the `hw-starter` folder (extension)
+3. Export HTML: saves the report as `report.html` and the airport page as `airport.html` in the `hw-starter` folder (extension)
 4. Exit
 
 To print everything at once, without the menu:
@@ -90,3 +90,28 @@ java -cp out display --html report.html
 ```
 
 This creates `report.html` with the processor, memory, PCI and USB sections as tables. The page uses the same data as the text report, has its CSS inside the file and needs no internet. Without `--html` the program works as before, in text only.
+
+# Extension: the airport page
+
+To explain the computer to someone who is not technical, the program can also save the same data as an airport, seen from above:
+
+```
+cd hw-starter
+javac -d out src/*.java
+java -cp out display --airport airport.html
+```
+
+Each part of the airport stands for a part of the computer. Click a part of the map (or press "Start the journey") to see what it means and the values read from this machine.
+
+| Airport | Computer | Where the value comes from |
+| --- | --- | --- |
+| 1 Car park | Disk | `/sys/block/<disk>/queue/rotational` |
+| 2 Taxi rank | USB devices | `/sys/bus/usb/devices` |
+| 3 Security | The serial part of a program (Amdahl's law) | the speedup measured by option 2 |
+| 4 Departure lounge | Memory, one seat = 1% | `/proc/meminfo` |
+| 5 Departures board | Turning ID numbers into names, with both sorts of the PCI list | `ids/pci.ids`, `ids/usb.ids` |
+| 6 Gates and service road | PCI bus, devices and addresses | `/sys/bus/pci/devices` |
+| 7 Control tower | Measuring the load: the two readings of core 0 and the calculation | `/proc/stat` |
+| 8 Runways | Processor cores and the load of each one | `/proc/cpuinfo`, `/proc/stat` |
+
+The drawing and the text are in `web/airport-template.html`. The class `airportReport` reads that file, replaces every marker such as `{{CORES}}` with the value from this machine and saves the result. The page needs no internet. If option 2 has not been run in the same session, the Security stop says the speedup was not measured yet.
