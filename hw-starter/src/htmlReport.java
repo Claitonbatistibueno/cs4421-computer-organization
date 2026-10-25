@@ -38,6 +38,10 @@ public class htmlReport {
 
         out.println("<h2>Processor</h2>");
         out.println("<p>Model: " + escape(cpuInfo.getModel()) + "<br>");
+        out.println("Frequency: " + cpuInfo.getFrequency() + "<br>");
+        out.println("Logical threads per package: " + cpuInfo.getLogicalThreads() + "<br>");
+        out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "<br>");
+        out.println("Are using a hypervisor ? " + cpuInfo.getHypervisor() + "<br>");
         out.println("Cores: " + cpuInfo.getCount() + "</p>");
 
         out.println("<table><tr><th>Core</th><th>Load</th><th></th></tr>");
@@ -66,7 +70,7 @@ public class htmlReport {
         out.println("<h3>Memory Chart</h3>");
         out.println("<div style=\"width:200px; height:200px; border-radius:50%; background: conic-gradient(red 0deg "
                 + usedDeg + "deg, green " + usedDeg + "deg 360deg)\"></div>");
-        out.println("<p>Red = used, green = free</p>");
+        out.println("<p>Red = Used<br> Green = Available</p>");
     }
 
     public static void pciSection(PrintWriter out) throws Exception {
