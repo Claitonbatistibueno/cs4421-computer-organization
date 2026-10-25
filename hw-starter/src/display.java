@@ -8,6 +8,10 @@ public class display {
             htmlReport.write(args[1]);
             return;
         }
+        if (args.length == 2 && args[0].equals("--airport")) {
+            airportReport.write(args[1]);
+            return;
+        }
         if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
             basicDisplay();
             parallelBench.main(null);
@@ -24,7 +28,7 @@ public class display {
             System.out.println("==== Options ====");
             System.out.println("1. System Stats");
             System.out.println("2. Parallelism & Verdict");
-            System.out.println("3. Export HTML");
+            System.out.println("3. Export HTML (report and airport page)");
             System.out.println("4. Exit");
             System.out.print("->");
 
@@ -51,6 +55,7 @@ public class display {
                 }  else if (choice == 3) {
                     clear();
                     htmlReport.write("report.html");
+                    airportReport.write("airport.html");
                 } else if (choice == 4) {
                     System.out.println("Bye!");
                     return;
