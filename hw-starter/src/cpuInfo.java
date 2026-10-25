@@ -25,29 +25,26 @@ public class cpuInfo
 
     /**
      * The processor model, for example "Intel(R) Xeon(R) Processor @ 2.80GHz".
-     * On arm64 there is no model name line, so this returns "unknown"; use
-     * getField("CPU part") or getField("CPU implementer") instead.
+     * On arm64 there is no model name line, so the CPU implementer and part numbers
+     * are returned instead, for example "CPU implementer: 0x41 | CPU part: 0xd08".
+     * Returns "unknown" if none of these lines exist.
      */
-    
     public static String getModel()
     {
+        // Flourish: if the normal CPU model exists, use it
         String model = getField("model name");
-         //Flourish:  If the normal CPU model exists get it 
-    if (!model.isEmpty()) {
-        return model;
-    }
-    // Flourish: get the ARM64 info
-    String implementer = getField("CPU implementer");
-    String part = getField("CPU part");
-        // Flourish: Checking if the ARM64 fields are missing
-    if (implementer.isEmpty() && part.isEmpty()) {
-        return "unknown";
-    }
-        //Flourish: added getField() calls and added labels for cleaner output
+        if (!model.isEmpty()) {
+            return model;
+        }
 
-return "CPU Implementer" + getField("CPU implementer") + "  | CPU Part: " + getField("CPU part");
-
-
+        // Flourish: arm64 has no model name, so use the implementer and part numbers
+        String implementer = getField("CPU implementer");
+        String part = getField("CPU part");
+        if (implementer.isEmpty() && part.isEmpty()) {
+            return "unknown";
+        }
+        return "CPU implementer: " + (implementer.isEmpty() ? "unknown" : implementer)
+             + " | CPU part: " + (part.isEmpty() ? "unknown" : part);
     }
     // Flourish: Get CPU frequency in MHz
     //craetinf a method for the frequncy that returns a string
@@ -81,6 +78,10 @@ public static String getPhysicalCores()
 {
     //set a string varianble on the vallue called from getfield with the cores param
     String cores = getField("cpu cores");
+    // arm64 has no "cpu cores" line
+    if (cores.isEmpty()) {
+        return "unknown";
+    }
     return cores;
 }
 // Flourish: check if a hypervisor is beign used
