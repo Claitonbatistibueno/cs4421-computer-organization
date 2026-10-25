@@ -127,6 +127,12 @@ public class display {
         System.out.printf("%n%s%n","==== PCIe Devices ====");
         System.out.println("PCI devices: " + pciInfo.getCount());
 
+        // WSL2 and some virtual machines show no PCI devices at all
+        if (pciInfo.getCount() == 0) {
+            System.out.println("No PCI devices could be found.");
+            return;
+        }
+
         try {
             pciInfo.arrayBuilderPCIe();
             System.out.println("PCI devices sorted by vendor name:");
@@ -139,6 +145,8 @@ public class display {
         
             System.out.println("Unique PCIe Vendors:");
             pciInfo.displayUniqueVendors();
+
+            pciInfo.displayUniqueClasses();
         } catch (Exception e) {
             System.out.println("Error, couldn't find PCIe devices.");
         }
