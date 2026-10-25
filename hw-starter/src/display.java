@@ -115,8 +115,12 @@ public class display {
     }
 
     public static void diskDisplay() {
-        String driveType = diskInfo.getDriveType();
-        System.out.println("Disk Type: " + driveType);
+        String diskName = diskInfo.getDiskName();
+        if (diskName.isEmpty()) {
+            System.out.println("Disk Type: unknown (no disk found in /sys/block)");
+            return;
+        }
+        System.out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ")");
     }
 
     public static void pciDisplay() {

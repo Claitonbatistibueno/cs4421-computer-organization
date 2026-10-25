@@ -40,10 +40,7 @@ public class verdict {
     }
 
     static String diskType() {
-        String d = diskInfo.getDriveType().toLowerCase();
-        if (d.equals("ssd") || d.equals("sdd")) return "SSD";
-        if (d.equals("hdd")) return "HDD";
-        return "unknown";
+        return diskInfo.getDriveType();
     }
 
     static void print(double speedup) throws Exception {
@@ -69,6 +66,7 @@ public class verdict {
         System.out.printf("%nYES = meets every need (within %.0f%%, as the OS reserves some RAM)%n", 100 * (1 - TOLERANCE));
         System.out.println("PARTLY = at least half of every need. NO = less, or a required GPU is missing.");
         if (disk.equals("unknown")) System.out.println("Disk type could not be read, so it was not counted.");
+        if (diskInfo.isVirtual()) System.out.println("The disk is a virtual one, so SSD or HDD is what the virtual machine reports, not the real drive.");
         if (gpu.equals("virtual")) System.out.println("The only display adapter is a virtual one (from the virtual machine), so it does not count as a GPU.");
     }
 
