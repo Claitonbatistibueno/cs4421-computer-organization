@@ -6,6 +6,18 @@ public class hardwareData {
 
     // Stores total and used memory
     public double[] memory;
+    
+    // Flourish: Collect memory information
+    public static double[] getMemoryData() {
+        double memTotal = memInfo.getTotal() / 1048576.0;
+        double memUsed = memInfo.getUsed() / 1048576.0;
+        return new double[] {memTotal, memUsed};
+}
+
+    // Flourish: Collect CPU load information
+    public static double[] getCpuData() {
+     return cpuInfo.fastLoad();
+}
 
     // Stores PCI device information
     public String[][] pciDevices;
@@ -17,10 +29,10 @@ public class hardwareData {
     public hardwareData() throws Exception {
 
         System.out.println("Collecting CPU...");
-        coreLoads = display.getCpuData();
+        coreLoads = getCpuData();
 
         System.out.println("Collecting Memory...");
-        memory = display.getMemoryData();
+        memory = getMemoryData();
 
         // Flourish: Collect PCI devices once
         System.out.println("Collecting PCI...");

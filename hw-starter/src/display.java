@@ -4,90 +4,110 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 public class display {
-    // Flourish: Collect memory info for both text and HTML reports
-public static double[] getMemoryData() {
-    double memTotal = memInfo.getTotal() / 1048576.0;
-    double memUsed = memInfo.getUsed() / 1048576.0;
 
-    return new double[] {memTotal, memUsed};
-}
-// Flourish: Collect CPU load info for both text and HTML reports
-public static double[] getCpuData() {
-    return cpuInfo.fastLoad();
-}
-    public static void main(String[] args) throws Exception { 
-        if (args.length == 2 && args[0].equals("--html")) {
-            htmlReport.write(args[1]);
-            return;
-        }
-        if (args.length == 2 && args[0].equals("--airport")) {
-            airportReport.write(args[1]);
-            return;
-        }
-        if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
-            basicDisplay();
-            parallelBench.main(null);
-            return;
-        }
-        interact();
+public static void main(String[] args) throws Exception {
+    // Generate HTML report directly
+    if (args.length == 2 && args[0].equals("--html")) {
+        hardwareData data = new hardwareData();
+        htmlReport.write(args[1], data);
+        return;
+    }
+
+    // Generate airport report directly
+    if (args.length == 2 && args[0].equals("--airport")) {
+        airportReport.write(args[1]);
+        return;
+    }
+
+    // Display system information and run benchmarks
+    if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
+        hardwareData data = new hardwareData();
+        basicDisplay(data);
+        parallelBench.main(null);
+        return;
+    }
+
+    // Show interactive menu
+    interact();
+
     }
 
     public static void interact() {
 
         Scanner input = new Scanner(System.in);
+        hardwareData data = null; //no info has been collected
 
         while (true) {
             System.out.println("==== Options ====");
             System.out.println("1. System Stats");
             System.out.println("2. Parallelism & Verdict");
             System.out.println("3. Export HTML (report and airport page)");
-            System.out.println("4. Exit");
+            //from eoins reviwe to Create an option in display to reset hardwareData and collect more data.
+            System.out.println("4. Refresh Hardware Data");
+            System.out.println("5. Exit");
             System.out.print("->");
 
-            if (!input.hasNext()) {
-                return;
-            }
+                if (!input.hasNext()) {
+                 return;
+                    }
             String choiceString = input.next();
             int choice;
 
-            try {
-                choice = Integer.parseInt(choiceString);
-            } catch (Exception e) {
-                System.out.println("Invalid Selection, try again.");
-                continue;
-            }
+                try {
+                 choice = Integer.parseInt(choiceString);
+                } catch (Exception e) {
+                  System.out.println("Invalid Selection, try again.");
+                    continue;
+                }
 
-            try {
+                try {
                 if (choice == 1) {
                     clear();
-                    basicDisplay();
-                } else if (choice == 2) {
-                    clear();
-                    parallelBench.main(null);
-                }  else if (choice == 3) {
-                    clear();
-                    // Flourish: Pass the obj  to the HTML report
-                    hardwareData data = new hardwareData();
-                    htmlReport.write("report.html", data);
-                    airportReport.write("airport.html");
-                } else if (choice == 4) {
-                    System.out.println("Bye!");
-                    return;
-                } else {
-                    System.out.println("Invalid Selection, try again.");
+
+                 if (data == null) {
+                    data = new hardwareData();
                 }
+
+    basicDisplay(data);
+
+
+} else if (choice == 2) {
+    clear();
+    parallelBench.main(null);
+
+} else if (choice == 3) {
+    clear();
+
+    // Collect information if no snapshot exists yet
+    if (data == null) {
+        data = new hardwareData();
+    }
+
+    // Reuse the existing hardware data
+    htmlReport.write("report.html", data);
+    airportReport.write("airport.html");
+} else if (choice == 4) {
+    clear();
+
+    // Replace old hardware snapshot with fresh data
+    data = new hardwareData();
+
+    System.out.println("Hardware data refreshed!");
+} else if (choice == 5) {
+    System.out.println("Bye!");
+    return;
+
+} else {
+    System.out.println("Invalid Selection, try again.");
+}
             } catch (Exception e) {
     System.out.println("An error occurred: " + e.getMessage());
     e.printStackTrace(); //Flourish: tells us exactly where the error occured
 }
         }
     }
-   
-    public static void basicDisplay() throws Exception{
-        // Flourish: Create an object of hardware class that collects info on cpu and memory data once
-        hardwareData data = new hardwareData();
-            System.out.println("DEBUG: Returned from hardwareData");
-    System.out.flush();
+   // accept the object to gurantee identical results beyween terminsl and html file
+   public static void basicDisplay(hardwareData data) throws Exception {
 
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
