@@ -220,10 +220,10 @@ public class airportReport {
                 break;
             }
         }
-        String address = first[0];
-        String example = "<p>Example: <code>" + address + "</code> means road (bus) <b>" + address.substring(5, 7)
-                + "</b>, gate (device) <b>" + address.substring(8, 10) + "</b>, door (function) <b>" + address.substring(11)
-                + "</b>. The first part, " + address.substring(0, 4) + ", is the domain (which airport), almost always 0000.</p>"
+        String[] part = first[0].split("[:.]");   // domain, bus, device, function
+        String example = "<p>Example: <code>" + first[0] + "</code> means road (bus) <b>" + part[1]
+                + "</b>, gate (device) <b>" + part[2] + "</b>, door (function) <b>" + part[3]
+                + "</b>. The first part, " + part[0] + ", is the domain (which airport), almost always 0000.</p>"
                 + "<p>At that gate: " + htmlReport.escape(first[3]) + ", " + htmlReport.escape(first[4]) + ".</p>";
 
         page = page.replace("{{BOARD_BY_AIRLINE}}", byAirline);
@@ -234,13 +234,15 @@ public class airportReport {
     }
 
     // One row of the departures board per PCI device; the address is split into bus, device and function.
+    // It is split at the : and . signs, not at fixed positions, because the domain is not always
+    // 4 digits (machines with Intel VMD have a domain such as 10000).
     static String boardRows(String[][] devices) {
         StringBuilder s = new StringBuilder();
         for (String[] d : devices) {
-            String address = d[0];
-            s.append("<tr><td class=\"tile\">").append(address.substring(5, 7))
-             .append("</td><td class=\"tile\">").append(address.substring(8, 10))
-             .append("</td><td class=\"tile\">").append(address.substring(11))
+            String[] part = d[0].split("[:.]");   // domain, bus, device, function
+            s.append("<tr><td class=\"tile\">").append(part[1])
+             .append("</td><td class=\"tile\">").append(part[2])
+             .append("</td><td class=\"tile\">").append(part[3])
              .append("</td><td>").append(htmlReport.escape(d[3]))
              .append("</td><td>").append(d[1]).append(":").append(d[2])
              .append("</td><td>").append(htmlReport.escape(d[4]))
