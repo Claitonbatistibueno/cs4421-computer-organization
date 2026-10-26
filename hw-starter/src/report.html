@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>Hardware Inspector</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 30px; color: #222; }
+h2 { border-bottom: 2px solid #444; padding-bottom: 4px; }
+table { border-collapse: collapse; margin-bottom: 20px; }
+th, td { border: 1px solid #ccc; padding: 4px 10px; text-align: left; }
+th { background: #eee; }
+.bar { background: #4a90d9; height: 14px; }
+</style></head><body>
+<h1>Hardware Inspector</h1>
+<h2>Processor</h2>
+<p>Model: Intel(R) Core(TM) Ultra 5 226V<br>
+Frequency: 3110.412 MHz<br>
+Logical threads per package: 4<br>
+Physical cores per package: 4<br>
+Running in a virtual machine (hypervisor): Yes<br>
+Cores: 4</p>
+<table><tr><th>Core</th><th>Load</th><th></th></tr>
+<tr><td>Core 0</td><td>0%</td><td style="width:200px"><div class="bar" style="width:0%"></div></td></tr>
+<tr><td>Core 1</td><td>2%</td><td style="width:200px"><div class="bar" style="width:2%"></div></td></tr>
+<tr><td>Core 2</td><td>3%</td><td style="width:200px"><div class="bar" style="width:3%"></div></td></tr>
+<tr><td>Core 3</td><td>1%</td><td style="width:200px"><div class="bar" style="width:1%"></div></td></tr>
+</table>
+<p>Average load: 1.51%</p>
+<h2>Memory</h2>
+<table><tr><th>Total</th><th>Used</th><th>Percentage used</th></tr>
+<tr><td>5.28 GiB</td><td>1.13 GiB</td><td>21.31%</td></tr>
+</table>
+<h3>Memory Chart</h3>
+<div style="width:200px; height:200px; border-radius:50%; background: conic-gradient(red 0deg 76.71793538321523deg, green 76.71793538321523deg 360deg)"></div>
+<p>Red = Used<br> Green = Available</p>
+<h2>PCI devices (11)</h2>
+<h3>Sorted by vendor name</h3>
+<table><tr><th>Address</th><th>Vendor:Device ID</th><th>Vendor</th><th>Device</th><th>Class</th></tr>
+<tr><td>0000:00:06.0</td><td>106b:003f</td><td>Apple Inc.</td><td>KeyLargo/Intrepid USB</td><td>0c0310 USB controller</td></tr>
+<tr><td>0000:00:02.0</td><td>80ee:beef</td><td>InnoTek Systemberatung GmbH</td><td>VirtualBox Graphics Adapter</td><td>030000 VGA compatible controller</td></tr>
+<tr><td>0000:00:04.0</td><td>80ee:cafe</td><td>InnoTek Systemberatung GmbH</td><td>VirtualBox Guest Service</td><td>088000 System peripheral</td></tr>
+<tr><td>0000:00:00.0</td><td>8086:1237</td><td>Intel Corporation</td><td>440FX - 82441FX PMC [Natoma]</td><td>060000 Host bridge</td></tr>
+<tr><td>0000:00:01.0</td><td>8086:7000</td><td>Intel Corporation</td><td>82371SB PIIX3 ISA [Natoma/Triton II]</td><td>060100 ISA bridge</td></tr>
+<tr><td>0000:00:01.1</td><td>8086:7111</td><td>Intel Corporation</td><td>82371AB/EB/MB PIIX4 IDE</td><td>01018a IDE interface</td></tr>
+<tr><td>0000:00:03.0</td><td>8086:100e</td><td>Intel Corporation</td><td>82540EM Gigabit Ethernet Controller</td><td>020000 Ethernet controller</td></tr>
+<tr><td>0000:00:05.0</td><td>8086:2415</td><td>Intel Corporation</td><td>82801AA AC'97 Audio Controller</td><td>040100 Multimedia audio controller</td></tr>
+<tr><td>0000:00:07.0</td><td>8086:7113</td><td>Intel Corporation</td><td>82371AB/EB/MB PIIX4 ACPI</td><td>068000 Bridge</td></tr>
+<tr><td>0000:00:0b.0</td><td>8086:265c</td><td>Intel Corporation</td><td>82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2 EHCI Controller</td><td>0c0320 USB controller</td></tr>
+<tr><td>0000:00:0d.0</td><td>8086:2829</td><td>Intel Corporation</td><td>82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode]</td><td>010601 SATA controller</td></tr>
+</table>
+<h3>Sorted by bus, device and function</h3>
+<table><tr><th>Address</th><th>Vendor:Device ID</th><th>Vendor</th><th>Device</th><th>Class</th></tr>
+<tr><td>0000:00:00.0</td><td>8086:1237</td><td>Intel Corporation</td><td>440FX - 82441FX PMC [Natoma]</td><td>060000 Host bridge</td></tr>
+<tr><td>0000:00:01.0</td><td>8086:7000</td><td>Intel Corporation</td><td>82371SB PIIX3 ISA [Natoma/Triton II]</td><td>060100 ISA bridge</td></tr>
+<tr><td>0000:00:01.1</td><td>8086:7111</td><td>Intel Corporation</td><td>82371AB/EB/MB PIIX4 IDE</td><td>01018a IDE interface</td></tr>
+<tr><td>0000:00:02.0</td><td>80ee:beef</td><td>InnoTek Systemberatung GmbH</td><td>VirtualBox Graphics Adapter</td><td>030000 VGA compatible controller</td></tr>
+<tr><td>0000:00:03.0</td><td>8086:100e</td><td>Intel Corporation</td><td>82540EM Gigabit Ethernet Controller</td><td>020000 Ethernet controller</td></tr>
+<tr><td>0000:00:04.0</td><td>80ee:cafe</td><td>InnoTek Systemberatung GmbH</td><td>VirtualBox Guest Service</td><td>088000 System peripheral</td></tr>
+<tr><td>0000:00:05.0</td><td>8086:2415</td><td>Intel Corporation</td><td>82801AA AC'97 Audio Controller</td><td>040100 Multimedia audio controller</td></tr>
+<tr><td>0000:00:06.0</td><td>106b:003f</td><td>Apple Inc.</td><td>KeyLargo/Intrepid USB</td><td>0c0310 USB controller</td></tr>
+<tr><td>0000:00:07.0</td><td>8086:7113</td><td>Intel Corporation</td><td>82371AB/EB/MB PIIX4 ACPI</td><td>068000 Bridge</td></tr>
+<tr><td>0000:00:0b.0</td><td>8086:265c</td><td>Intel Corporation</td><td>82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2 EHCI Controller</td><td>0c0320 USB controller</td></tr>
+<tr><td>0000:00:0d.0</td><td>8086:2829</td><td>Intel Corporation</td><td>82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode]</td><td>010601 SATA controller</td></tr>
+</table>
+<h3>Devices per vendor</h3>
+<table><tr><th>Vendor</th><th>Devices</th></tr>
+<tr><td>Intel Corporation</td><td>8</td></tr>
+<tr><td>InnoTek Systemberatung GmbH</td><td>2</td></tr>
+<tr><td>Apple Inc.</td><td>1</td></tr>
+</table>
+<h3>Devices per class</h3>
+<table><tr><th>Class</th><th>Devices</th></tr>
+<tr><td>Host bridge</td><td>1</td></tr>
+<tr><td>ISA bridge</td><td>1</td></tr>
+<tr><td>IDE interface</td><td>1</td></tr>
+<tr><td>VGA compatible controller</td><td>1</td></tr>
+<tr><td>Ethernet controller</td><td>1</td></tr>
+<tr><td>System peripheral</td><td>1</td></tr>
+<tr><td>Multimedia audio controller</td><td>1</td></tr>
+<tr><td>USB controller</td><td>2</td></tr>
+<tr><td>Bridge</td><td>1</td></tr>
+<tr><td>SATA controller</td><td>1</td></tr>
+</table>
+<h2>USB devices (3)</h2>
+<table><tr><th>Bus</th><th>Device</th><th>Vendor:Product ID</th><th>Vendor</th><th>Product</th></tr>
+<tr><td>001</td><td>001</td><td>1d6b:0001</td><td>Linux Foundation</td><td>1.1 root hub</td></tr>
+<tr><td>001</td><td>002</td><td>80ee:0021</td><td>VirtualBox</td><td>USB Tablet</td></tr>
+<tr><td>002</td><td>001</td><td>1d6b:0002</td><td>Linux Foundation</td><td>2.0 root hub</td></tr>
+</table>
+</body></html>

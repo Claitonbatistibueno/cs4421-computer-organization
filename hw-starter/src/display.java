@@ -1,8 +1,20 @@
 // Class made by Eoin for displaying info
-
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class display {
+    // Flourish: Collect memory info for both text and HTML reports
+public static double[] getMemoryData() {
+    double memTotal = memInfo.getTotal() / 1048576.0;
+    double memUsed = memInfo.getUsed() / 1048576.0;
+
+    return new double[] {memTotal, memUsed};
+}
+// Flourish: Collect CPU load info for both text and HTML reports
+public static double[] getCpuData() {
+    return cpuInfo.fastLoad();
+}
     public static void main(String[] args) throws Exception { 
         if (args.length == 2 && args[0].equals("--html")) {
             htmlReport.write(args[1]);
@@ -54,7 +66,9 @@ public class display {
                     parallelBench.main(null);
                 }  else if (choice == 3) {
                     clear();
-                    htmlReport.write("report.html");
+                    // Flourish: Pass the obj  to the HTML report
+                    hardwareData data = new hardwareData();
+                    htmlReport.write("report.html", data);
                     airportReport.write("airport.html");
                 } else if (choice == 4) {
                     System.out.println("Bye!");
@@ -63,12 +77,18 @@ public class display {
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
-                System.out.println("An error occurred, try again!");
-            }
+    System.out.println("An error occurred: " + e.getMessage());
+    e.printStackTrace(); //Flourish: tells us exactly where the error occured
+}
         }
     }
    
     public static void basicDisplay() throws Exception{
+        // Flourish: Create an object of hardware class that collects info on cpu and memory data once
+        hardwareData data = new hardwareData();
+            System.out.println("DEBUG: Returned from hardwareData");
+    System.out.flush();
+
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
         System.out.println("Frequency: " + cpuInfo.getFrequency());
@@ -76,21 +96,24 @@ public class display {
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
         System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
-        memDisplay();
-        cpuDisplay();
-        pciDisplay();
-        usbDisplay();
-    }
 
-    public static void memDisplay() {
-        double memTotal = memInfo.getTotal() / 1048576;
-        double memUsed = memInfo.getUsed() / 1048576;
+// Flourish: Use memory info stored in the obj
+memDisplay(data.memory[0], data.memory[1]);
+// Flourish: Use CPU info stored in obj
+cpuDisplay(data.coreLoads);
+// Flourish: Use PCI devices info stored in obj
+pciDisplay(data.pciDevices);
+// Flourish: use collected USB data stored in obj
+usbDisplay(data.usbDevices);
+    }
+    //Flourish: receives the values as params
+    public static void memDisplay(double memTotal, double memUsed) {
         double memPer = (memUsed / memTotal) * 100;
         String ftTotal = String.format("%.2f", memTotal);
         String ftUsed = String.format("%.2f", memUsed);
         String ftPer = String.format("%.2f", memPer);
 
-        if (memTotal < 0 || memUsed < 0 ) {
+        if (memTotal <= 0 || memUsed < 0 ) {
             System.out.println("Memory couldn't be accessed!");
             return;
         }
@@ -98,9 +121,9 @@ public class display {
         System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " GiB", ftPer + "%");
     }
 
-    public static void cpuDisplay() {
-        double[] coreLoads = cpuInfo.fastLoad();
-        int coreCount = cpuInfo.getCount();   // coreLoads[coreCount] is the average load
+       // Flourish: Receive CPU load data instead of measuring it here
+        public static void cpuDisplay(double[] coreLoads) {
+            int coreCount = coreLoads.length - 1;
 
         System.out.printf("%n%s%n","==== CPU ====");
         System.out.println("No. of Cores: " + coreCount);
@@ -133,57 +156,111 @@ public class display {
         }
         System.out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ")");
     }
+// Flourish: Display PCI devices using already collected data
+public static void pciDisplay(String[][] devices) {
 
-    public static void pciDisplay() {
-        System.out.printf("%n%s%n","==== PCIe Devices ====");
-        System.out.println("PCI devices: " + pciInfo.getCount());
+    System.out.printf("%n%s%n", "==== PCIe Devices ====");
+    System.out.println("PCI devices: " + devices.length);
 
-        // WSL2 and some virtual machines show no PCI devices at all
-        if (pciInfo.getCount() == 0) {
-            System.out.println("No PCI devices could be found.");
-            return;
-        }
-
-        try {
-            pciInfo.arrayBuilderPCIe();
-            System.out.println("PCI devices sorted by vendor name:");
-            pciInfo.sortByVendorName();
-            pciInfo.displayInfo();
-
-            System.out.println("PCI devices sorted by bus, device and function:");
-            pciInfo.sortByBusDeviceFunction();
-            pciInfo.displayInfo();
-        
-            System.out.println("Unique PCIe Vendors:");
-            pciInfo.displayUniqueVendors();
-
-            pciInfo.displayUniqueClasses();
-        } catch (Exception e) {
-            System.out.println("Error, couldn't find PCIe devices.");
-        }
-        
+    if (devices.length == 0) {
+        System.out.println("No PCI devices could be found.");
+        return;
     }
+
+    // Copy the collected data so sorting doesn't change the original
+    String[][] sortedDevices = devices.clone();
+
+    // Sort by vendor name
+    Arrays.sort(sortedDevices,
+        Comparator.comparing(row -> row[3],
+            Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+
+    System.out.println("PCI devices sorted by vendor name:");
+    printPciDevices(sortedDevices);
+
+    // Sort by bus, device and function
+    Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
+
+    System.out.println("PCI devices sorted by bus, device and function:");
+    printPciDevices(sortedDevices);
+
+    // Count devices by vendor and class
+    System.out.println("Unique PCIe Vendors:");
+    printPciCounts(devices, 3, false);
+
+    System.out.println("Unique PCIe Classes:");
+    printPciCounts(devices, 6, true);
+}
+// Flourish: Print PCI device details from collected data
+public static void printPciDevices(String[][] devices) {
+
+    for (String[] device : devices) {
+        System.out.printf(
+            "  %s  %s:%s  %s %s  [%s] %s%n",
+            device[0],
+            device[1],
+            device[2],
+            device[3],
+            device[4],
+            device[5],
+            device[6]
+        );
+    }
+}
+// Flourish: Count PCI devices by vendor or class
+public static void printPciCounts(String[][] devices, int column, boolean showCode) {
+
+    java.util.LinkedHashMap<String, Integer> counts =
+        new java.util.LinkedHashMap<>();
+
+    java.util.LinkedHashMap<String, String> codes =
+        new java.util.LinkedHashMap<>();
+
+    for (String[] device : devices) {
+        String name = device[column];
+
+        counts.put(name, counts.getOrDefault(name, 0) + 1);
+
+        if (showCode) {
+            codes.putIfAbsent(name, device[5]);
+        }
+    }
+
+    for (String name : counts.keySet()) {
+        System.out.print("  " + name + " (" + counts.get(name) + ")");
+
+        if (showCode) {
+            System.out.print(" [Code: " + codes.get(name) + "]");
+        }
+
+        System.out.println();
+    }
+}
     
-    public static void usbDisplay() {
-        int usbCount = usbInfo.getCount();
+    // Flourish: Display USB devices using collected data
+public static void usbDisplay(String[][] devices) {
 
-        System.out.printf("%n%s%n","==== USB ====");
-        if (usbCount <= 0) {
-            System.out.println("No USB devices could be found.");
-            return;
-        }
+    System.out.printf("%n%s%n", "==== USB ====");
 
-        // the array from usbInfo already shows the raw ID when a name is not in usb.ids
-        try {
-            usbInfo.getDevices();
-        } catch (Exception e) {
-            System.out.println("Error, couldn't look up usb devices!");
-            return;
-        }
-
-        System.out.println("USB devices: " + usbCount);
-        usbInfo.displayUSBInfo();
+    if (devices.length == 0) {
+        System.out.println("No USB devices could be found.");
+        return;
     }
+
+    System.out.println("USB devices: " + devices.length);
+
+    for (String[] device : devices) {
+        System.out.printf(
+            "  Bus %s Device %s: ID %s:%s  %s %s%n",
+            device[0],
+            device[1],
+            device[2],
+            device[3],
+            device[4],
+            device[5]
+        );
+    }
+}
 
     public static void clear() { 
         System.out.print("\033[H\033[2J");

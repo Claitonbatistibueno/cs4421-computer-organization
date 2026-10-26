@@ -2,11 +2,14 @@
 // Run: java -cp out display --html report.html
 
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class htmlReport {
 
-    public static void write(String fileName) throws Exception {
-        PrintWriter out = new PrintWriter(fileName);
+    // Flourish: Allow the HTML report to receive info from the hardware obj
+public static void write(String fileName, hardwareData data) throws Exception {
+    PrintWriter out = new PrintWriter(fileName);
 
         out.println("<!DOCTYPE html>");
         out.println("<html><head><meta charset=\"utf-8\">");
@@ -21,20 +24,29 @@ public class htmlReport {
         out.println("</style></head><body>");
         out.println("<h1>Hardware Inspector</h1>");
 
-        cpuSection(out);
-        memSection(out);
-        pciSection(out);
-        usbSection(out);
+// Flourish: Pass the collected CPU data to the HTML section
+cpuSection(out, data.coreLoads);
 
+// Flourish: Pass the collected memory data to the HTML section
+memSection(out, data.memory[0], data.memory[1]);   
+// Flourish: Pass the stored PCI devices to the HTML report
+pciSection(out, data.pciDevices);  
+// Flourish: Pass collected USB data to the HTML report
+usbSection(out, data.usbDevices);
         out.println("</body></html>");
         out.close();
 
         System.out.println("HTML report saved to " + fileName);
     }
+    // Flourish: overloading the write method to keep existing calls to htmlReport.write() working
+public static void write(String fileName) throws Exception {
+    hardwareData data = new hardwareData();
+    write(fileName, data);
+}
 
-    public static void cpuSection(PrintWriter out) {
-        double[] coreLoads = cpuInfo.fastLoad();
-        int last = coreLoads.length - 1;   // the last value is the average load
+ // Flourish: Receive CPU load data instead of measuring it again
+public static void cpuSection(PrintWriter out, double[] coreLoads) {
+    int coreCount = coreLoads.length - 1;
 
         out.println("<h2>Processor</h2>");
         out.println("<p>Model: " + escape(cpuInfo.getModel()) + "<br>");
@@ -44,26 +56,25 @@ public class htmlReport {
         out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor() + "<br>");
         out.println("Cores: " + cpuInfo.getCount() + "</p>");
 
-        if (last == 0) {   // no cores, so only the average slot exists
+        if (coreCount == 0) {   // no cores, so only the average slot exists
             out.println("<p>CPU load couldn't be measured (no cores found in /proc/cpuinfo).</p>");
             return;
         }
 
         out.println("<table><tr><th>Core</th><th>Load</th><th></th></tr>");
-        for (int i = 0; i < last; i++) {
+        for (int i = 0; i < coreCount; i++) {
             String load = String.format("%.0f", coreLoads[i]);
             out.println("<tr><td>Core " + i + "</td><td>" + load + "%</td>"
                     + "<td style=\"width:200px\"><div class=\"bar\" style=\"width:" + load + "%\"></div></td></tr>");
         }
         out.println("</table>");
-        out.println("<p>Average load: " + String.format("%.2f", coreLoads[last]) + "%</p>");
+        out.println("<p>Average load: " + String.format("%.2f", coreLoads[coreCount]) + "%</p>");
     }
 
-    public static void memSection(PrintWriter out) {
-        double memTotal = memInfo.getTotal() / 1048576;
-        double memUsed = memInfo.getUsed() / 1048576;
+       // Flourish: Receive memory data instead of reading it again
+        public static void memSection(PrintWriter out, double memTotal, double memUsed) {
         double memPer = (memUsed / memTotal) * 100;
-
+        
         out.println("<h2>Memory</h2>");
         // same check as the text report: -1 means /proc/meminfo could not be read
         if (memTotal <= 0 || memUsed < 0) {
@@ -83,28 +94,38 @@ public class htmlReport {
         out.println("<p>Red = Used<br> Green = Available</p>");
     }
 
-    public static void pciSection(PrintWriter out) throws Exception {
-        out.println("<h2>PCI devices (" + pciInfo.getCount() + ")</h2>");
 
-        if (pciInfo.getCount() == 0) {
+   // Flourish: Receive collected PCI devices instead of reading them again
+public static void pciSection(PrintWriter out, String[][] devices) throws Exception {
+ out.println("<h2>PCI devices (" + devices.length + ")</h2>");
+
+        if (devices.length == 0) {
             out.println("<p>No PCI devices could be found.</p>");
             return;
         }
 
-        pciInfo.sortByVendorName();
-        out.println("<h3>Sorted by vendor name</h3>");
-        pciTable(out, pciInfo.getDevices());
+// Flourish: Copy the collected data so sorting doesn't change stored data
+String[][] sortedDevices = devices.clone();
 
-        pciInfo.sortByBusDeviceFunction();
-        out.println("<h3>Sorted by bus, device and function</h3>");
-        pciTable(out, pciInfo.getDevices());
+// Sort by vendor name
+Arrays.sort(sortedDevices,
+        Comparator.comparing(row -> row[3],
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+
+out.println("<h3>Sorted by vendor name</h3>");
+pciTable(out, sortedDevices);
+
+// Sort by PCI address
+Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
+
+out.println("<h3>Sorted by bus, device and function</h3>");
+pciTable(out, sortedDevices);
 
         out.println("<h3>Devices per vendor</h3>");
-        countTable(out, pciInfo.getDevices(), 3, "Vendor");
-
+        countTable(out, devices, 3, "Vendor");
         out.println("<h3>Devices per class</h3>");
-        countTable(out, pciInfo.getDevices(), 6, "Class");
-    }
+        countTable(out, devices, 6, "Class");   
+     }
 
     // 0 - Address, 1 - Vendor ID, 2 - Device ID, 3 - Vendor Name, 4 - Device Name, 5 - Class code, 6 - Class name
     public static void pciTable(PrintWriter out, String[][] devices) {
@@ -144,18 +165,19 @@ public class htmlReport {
     }
 
     // 0 - Bus, 1 - Device, 2 - Vendor ID, 3 - Product ID, 4 - Vendor Name, 5 - Product Name
-    public static void usbSection(PrintWriter out) throws Exception {
-        out.println("<h2>USB devices (" + usbInfo.getCount() + ")</h2>");
-
-        if (usbInfo.getCount() <= 0) {
-            out.println("<p>No USB devices could be found.</p>");
+    // Flourish: Receive collected USB devices instead of reading them again
+public static void usbSection(PrintWriter out, String[][] devices) {
+out.println("<h2>USB devices (" + devices.length + ")</h2>");
+if (devices.length == 0) {
+                out.println("<p>No USB devices could be found.</p>");
             return;
         }
 
         out.println("<table><tr><th>Bus</th><th>Device</th><th>Vendor:Product ID</th>"
                 + "<th>Vendor</th><th>Product</th></tr>");
-        for (String[] d : usbInfo.getDevices()) {
-            out.println("<tr><td>" + d[0] + "</td><td>" + d[1] + "</td><td>" + d[2] + ":" + d[3]
+// Flourish: Use stored USB data instead of collecting it again
+for (String[] d : devices) {
+                out.println("<tr><td>" + d[0] + "</td><td>" + d[1] + "</td><td>" + d[2] + ":" + d[3]
                     + "</td><td>" + escape(d[4]) + "</td><td>" + escape(d[5]) + "</td></tr>");
         }
         out.println("</table>");
