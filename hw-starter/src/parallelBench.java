@@ -79,7 +79,7 @@ public class parallelBench {
         double s = time[0] / time[ref];
         double p = n > 1 ? Math.min(1, Math.max(0, (1 - 1 / s) / (1 - 1.0 / n))) : 1;
 
-        System.out.println("===== MEASURED PERFORMANCE =====");
+        System.out.printf("%n%s%n","===== MEASURED PERFORMANCE =====");
         System.out.printf("Task: count primes below %,d (%,d found), average of %d runs%n", LIMIT, primes, RUNS);
         System.out.printf("Logical cores: %d%n", cores);
         System.out.printf("Estimated parallel fraction p = %.3f (from %d threads)%n%n", p, n);
