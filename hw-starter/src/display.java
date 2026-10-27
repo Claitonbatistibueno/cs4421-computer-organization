@@ -5,109 +5,98 @@ import java.util.Scanner;
 
 public class display {
 
-public static void main(String[] args) throws Exception {
+    public static hardwareData data;
+
+    public static void main(String[] args) throws Exception {
     // Generate HTML report directly
-    if (args.length == 2 && args[0].equals("--html")) {
-        hardwareData data = new hardwareData();
-        htmlReport.write(args[1], data);
-        return;
-    }
 
-    // Generate airport report directly
-    if (args.length == 2 && args[0].equals("--airport")) {
-        airportReport.write(args[1]);
-        return;
-    }
+        data = new hardwareData();
 
-    // Display system information and run benchmarks
-    if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
-        hardwareData data = new hardwareData();
-        basicDisplay(data);
-        parallelBench.main(null);
-        return;
-    }
+        if (args.length == 2 && args[0].equals("--html")) {
+            htmlReport.write(args[1], data);
+            return;
+        }
 
-    // Show interactive menu
-    interact();
+        // Generate airport report directly
+        if (args.length == 2 && args[0].equals("--airport")) {
+            airportReport.write(args[1]);
+            return;
+        }
 
-    }
+        // Display system information and run benchmarks
+        if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
+            hardwareData data = new hardwareData();
+            parallelBench.main(null);
+            return;
+        }
+
+        // Show interactive menu
+        interact();
+
+        }
 
     public static void interact() {
 
         Scanner input = new Scanner(System.in);
-        hardwareData data = null; //no info has been collected
 
         while (true) {
             System.out.println("==== Options ====");
             System.out.println("1. System Stats");
             System.out.println("2. Parallelism & Verdict");
             System.out.println("3. Export HTML (report and airport page)");
-            //from eoins reviwe to Create an option in display to reset hardwareData and collect more data.
+            //from eoins review to create an option in display to reset hardwareData and collect more data.
             System.out.println("4. Refresh Hardware Data");
             System.out.println("5. Exit");
             System.out.print("->");
 
-                if (!input.hasNext()) {
-                 return;
-                    }
+            if (!input.hasNext()) {
+                return;
+            }
             String choiceString = input.next();
             int choice;
 
-                try {
-                 choice = Integer.parseInt(choiceString);
-                } catch (Exception e) {
-                  System.out.println("Invalid Selection, try again.");
-                    continue;
-                }
+            try {
+             choice = Integer.parseInt(choiceString);
+            } catch (Exception e) {
+                System.out.println("Invalid Selection, try again.");
+                continue;
+            }
 
-                try {
+            try {
                 if (choice == 1) {
                     clear();
+                    basicDisplay(data);
 
-                 if (data == null) {
+                } else if (choice == 2) {
+                    clear();
+                    parallelBench.main(null);
+
+                } else if (choice == 3) {
+                    clear();
+                    // Reuse the existing hardware data
+                    htmlReport.write("report.html", data);
+                    airportReport.write("airport.html");
+
+                } else if (choice == 4) {
+                    clear();
                     data = new hardwareData();
+                    System.out.println("Hardware data refreshed!");
+
+                } else if (choice == 5) {
+                    System.out.println("Bye!");
+                    return;
+
+                } else {
+                    System.out.println("Invalid Selection, try again.");
                 }
-
-    basicDisplay(data);
-
-
-} else if (choice == 2) {
-    clear();
-    parallelBench.main(null);
-
-} else if (choice == 3) {
-    clear();
-
-    // Collect information if no snapshot exists yet
-    if (data == null) {
-        data = new hardwareData();
-    }
-
-    // Reuse the existing hardware data
-    htmlReport.write("report.html", data);
-    airportReport.write("airport.html");
-} else if (choice == 4) {
-    clear();
-
-    // Replace old hardware snapshot with fresh data
-    data = new hardwareData();
-
-    System.out.println("Hardware data refreshed!");
-} else if (choice == 5) {
-    System.out.println("Bye!");
-    return;
-
-} else {
-    System.out.println("Invalid Selection, try again.");
-}
             } catch (Exception e) {
-    System.out.println("An error occurred: " + e.getMessage());
-    e.printStackTrace(); //Flourish: tells us exactly where the error occured
-}
+                System.out.println("An error occurred: " + e.getMessage());
+                e.printStackTrace(); //Flourish: tells us exactly where the error occured
+            }
         }
     }
    // accept the object to gurantee identical results beyween terminsl and html file
-   public static void basicDisplay(hardwareData data) throws Exception {
+    public static void basicDisplay(hardwareData data) throws Exception {
 
         System.out.println("==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
@@ -142,8 +131,8 @@ usbDisplay(data.usbDevices);
     }
 
        // Flourish: Receive CPU load data instead of measuring it here
-        public static void cpuDisplay(double[] coreLoads) {
-            int coreCount = coreLoads.length - 1;
+    public static void cpuDisplay(double[] coreLoads) {
+        int coreCount = coreLoads.length - 1;
 
         System.out.printf("%n%s%n","==== CPU ====");
         System.out.println("No. of Cores: " + coreCount);
@@ -177,107 +166,107 @@ usbDisplay(data.usbDevices);
         System.out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ")");
     }
 // Flourish: Display PCI devices using already collected data
-public static void pciDisplay(String[][] devices) {
+    public static void pciDisplay(String[][] devices) {
 
-    System.out.printf("%n%s%n", "==== PCIe Devices ====");
-    System.out.println("PCI devices: " + devices.length);
+        System.out.printf("%n%s%n", "==== PCIe Devices ====");
+        System.out.println("PCI devices: " + devices.length);
 
-    if (devices.length == 0) {
-        System.out.println("No PCI devices could be found.");
-        return;
-    }
+        if (devices.length == 0) {
+            System.out.println("No PCI devices could be found.");
+            return;
+        }
 
-    // Copy the collected data so sorting doesn't change the original
-    String[][] sortedDevices = devices.clone();
+        // Copy the collected data so sorting doesn't change the original
+        String[][] sortedDevices = devices.clone();
 
-    // Sort by vendor name
-    Arrays.sort(sortedDevices,
-        Comparator.comparing(row -> row[3],
-            Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+        // Sort by vendor name
+        Arrays.sort(sortedDevices,
+            Comparator.comparing(row -> row[3],
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
 
-    System.out.println("PCI devices sorted by vendor name:");
-    printPciDevices(sortedDevices);
+        System.out.println("PCI devices sorted by vendor name:");
+        printPciDevices(sortedDevices);
 
-    // Sort by bus, device and function
-    Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
+        // Sort by bus, device and function
+        Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
 
-    System.out.println("PCI devices sorted by bus, device and function:");
-    printPciDevices(sortedDevices);
+        System.out.println("PCI devices sorted by bus, device and function:");
+        printPciDevices(sortedDevices);
 
-    // Count devices by vendor and class
-    System.out.println("Unique PCIe Vendors:");
-    printPciCounts(devices, 3, false);
+        // Count devices by vendor and class
+        System.out.println("Unique PCIe Vendors:");
+        printPciCounts(devices, 3, false);
 
-    System.out.println("Unique PCIe Classes:");
-    printPciCounts(devices, 6, true);
+        System.out.println("Unique PCIe Classes:");
+        printPciCounts(devices, 6, true);
 }
 // Flourish: Print PCI device details from collected data
-public static void printPciDevices(String[][] devices) {
+    public static void printPciDevices(String[][] devices) {
 
-    for (String[] device : devices) {
-        System.out.printf(
-            "  %s  %s:%s  %s %s  [%s] %s%n",
-            device[0],
-            device[1],
-            device[2],
-            device[3],
-            device[4],
-            device[5],
-            device[6]
+        for (String[] device : devices) {
+            System.out.printf(
+                "  %s  %s:%s  %s %s  [%s] %s%n",
+                device[0],
+                device[1],
+                device[2],
+                device[3],
+                device[4],
+                device[5],
+                device[6]
         );
     }
 }
 // Flourish: Count PCI devices by vendor or class
-public static void printPciCounts(String[][] devices, int column, boolean showCode) {
+    public static void printPciCounts(String[][] devices, int column, boolean showCode) {
 
-    java.util.LinkedHashMap<String, Integer> counts =
-        new java.util.LinkedHashMap<>();
+        java.util.LinkedHashMap<String, Integer> counts =
+            new java.util.LinkedHashMap<>();
 
-    java.util.LinkedHashMap<String, String> codes =
-        new java.util.LinkedHashMap<>();
+        java.util.LinkedHashMap<String, String> codes =
+            new java.util.LinkedHashMap<>();
 
-    for (String[] device : devices) {
-        String name = device[column];
+        for (String[] device : devices) {
+            String name = device[column];
 
-        counts.put(name, counts.getOrDefault(name, 0) + 1);
+            counts.put(name, counts.getOrDefault(name, 0) + 1);
 
-        if (showCode) {
-            codes.putIfAbsent(name, device[5]);
-        }
-    }
-
-    for (String name : counts.keySet()) {
-        System.out.print("  " + name + " (" + counts.get(name) + ")");
-
-        if (showCode) {
-            System.out.print(" [Code: " + codes.get(name) + "]");
+            if (showCode) {
+                codes.putIfAbsent(name, device[5]);
+            }
         }
 
-        System.out.println();
+        for (String name : counts.keySet()) {
+            System.out.print("  " + name + " (" + counts.get(name) + ")");
+
+            if (showCode) {
+                System.out.print(" [Code: " + codes.get(name) + "]");
+            }
+
+            System.out.println();
     }
 }
     
     // Flourish: Display USB devices using collected data
-public static void usbDisplay(String[][] devices) {
+    public static void usbDisplay(String[][] devices) {
 
-    System.out.printf("%n%s%n", "==== USB ====");
+        System.out.printf("%n%s%n", "==== USB ====");
 
-    if (devices.length == 0) {
-        System.out.println("No USB devices could be found.");
-        return;
-    }
+        if (devices.length == 0) {
+            System.out.println("No USB devices could be found.");
+            return;
+        }
 
-    System.out.println("USB devices: " + devices.length);
+        System.out.println("USB devices: " + devices.length);
 
-    for (String[] device : devices) {
-        System.out.printf(
-            "  Bus %s Device %s: ID %s:%s  %s %s%n",
-            device[0],
-            device[1],
-            device[2],
-            device[3],
-            device[4],
-            device[5]
+        for (String[] device : devices) {
+            System.out.printf(
+                "  Bus %s Device %s: ID %s:%s  %s %s%n",
+                device[0],
+                device[1],
+                device[2],
+                device[3],
+                device[4],
+                device[5]
         );
     }
 }
