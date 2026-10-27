@@ -8,24 +8,23 @@ public class display {
     public static hardwareData data;
 
     public static void main(String[] args) throws Exception {
-    // Generate HTML report directly
-
         data = new hardwareData();
 
+        // Generate HTML report directly
         if (args.length == 2 && args[0].equals("--html")) {
             htmlReport.write(args[1], data);
             return;
         }
 
         // Generate airport report directly
-        if (args.length == 2 && args[0].equals("--airport")) {
+        else if (args.length == 2 && args[0].equals("--airport")) {
             airportReport.write(args[1]);
             return;
         }
 
         // Display system information and run benchmarks
-        if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
-            hardwareData data = new hardwareData();
+        else if (args.length > 0 && args[0].equalsIgnoreCase("all")) {
+            basicDisplay(data);
             parallelBench.main(null);
             return;
         }
@@ -40,7 +39,7 @@ public class display {
         Scanner input = new Scanner(System.in);
 
         while (true) {
-            System.out.println("==== Options ====");
+            System.out.printf("%n%s%n","==== Options ====");
             System.out.println("1. System Stats");
             System.out.println("2. Parallelism & Verdict");
             System.out.println("3. Export HTML (report and airport page)");
@@ -98,7 +97,7 @@ public class display {
    // accept the object to gurantee identical results beyween terminsl and html file
     public static void basicDisplay(hardwareData data) throws Exception {
 
-        System.out.println("==== System Info ====");
+        System.out.printf("%n%s%n","==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
@@ -106,15 +105,16 @@ public class display {
         System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
 
-// Flourish: Use memory info stored in the obj
-memDisplay(data.memory[0], data.memory[1]);
-// Flourish: Use CPU info stored in obj
-cpuDisplay(data.coreLoads);
-// Flourish: Use PCI devices info stored in obj
-pciDisplay(data.pciDevices);
-// Flourish: use collected USB data stored in obj
-usbDisplay(data.usbDevices);
+        // Flourish: Use memory info stored in the obj
+        memDisplay(data.memory[0], data.memory[1]);
+        // Flourish: Use CPU info stored in obj
+        cpuDisplay(data.coreLoads);
+        // Flourish: Use PCI devices info stored in obj
+        pciDisplay(data.pciDevices);
+        // Flourish: use collected USB data stored in obj
+        usbDisplay(data.usbDevices);
     }
+
     //Flourish: receives the values as params
     public static void memDisplay(double memTotal, double memUsed) {
         double memPer = (memUsed / memTotal) * 100;
@@ -130,7 +130,7 @@ usbDisplay(data.usbDevices);
         System.out.printf("%-15s %-15s %-15s %n", ftTotal + " GiB", ftUsed + " GiB", ftPer + "%");
     }
 
-       // Flourish: Receive CPU load data instead of measuring it here
+    // Flourish: Receive CPU load data instead of measuring it here
     public static void cpuDisplay(double[] coreLoads) {
         int coreCount = coreLoads.length - 1;
 
@@ -165,7 +165,7 @@ usbDisplay(data.usbDevices);
         }
         System.out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ")");
     }
-// Flourish: Display PCI devices using already collected data
+    // Flourish: Display PCI devices using already collected data
     public static void pciDisplay(String[][] devices) {
 
         System.out.printf("%n%s%n", "==== PCIe Devices ====");
@@ -200,7 +200,7 @@ usbDisplay(data.usbDevices);
         System.out.println("Unique PCIe Classes:");
         printPciCounts(devices, 6, true);
 }
-// Flourish: Print PCI device details from collected data
+    // Flourish: Print PCI device details from collected data
     public static void printPciDevices(String[][] devices) {
 
         for (String[] device : devices) {
@@ -216,7 +216,7 @@ usbDisplay(data.usbDevices);
         );
     }
 }
-// Flourish: Count PCI devices by vendor or class
+    // Flourish: Count PCI devices by vendor or class
     public static void printPciCounts(String[][] devices, int column, boolean showCode) {
 
         java.util.LinkedHashMap<String, Integer> counts =
