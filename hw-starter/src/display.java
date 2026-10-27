@@ -55,7 +55,7 @@ public class display {
             int choice;
 
             try {
-             choice = Integer.parseInt(choiceString);
+                choice = Integer.parseInt(choiceString);
             } catch (Exception e) {
                 System.out.println("Invalid Selection, try again.");
                 continue;
@@ -86,6 +86,7 @@ public class display {
                     return;
 
                 } else {
+                    clear();
                     System.out.println("Invalid Selection, try again.");
                 }
             } catch (Exception e) {
