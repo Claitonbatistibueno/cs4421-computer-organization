@@ -100,9 +100,6 @@ public class display {
 
         System.out.printf("%n%s%n","==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
-        System.out.println("Frequency: " + cpuInfo.getFrequency());
-        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
-        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
         System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
 
@@ -136,12 +133,14 @@ public class display {
         int coreCount = coreLoads.length - 1;
 
         System.out.printf("%n%s%n","==== CPU ====");
-        System.out.println("No. of Cores: " + coreCount);
+        System.out.println("Frequency: " + cpuInfo.getFrequency());
+        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
+        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
         if (coreCount == 0) {
             System.out.println("CPU load couldn't be measured (no cores found in /proc/cpuinfo).");
             System.out.println();
         } else {
-            System.out.printf("%-10s %s%n", "Core", "Load");
+            System.out.printf("%n%-10s %s%n", "Core", "Load");
             for (int i = 0; i < coreCount; i++) {
                 System.out.printf("%-10d %.2f%%%n", i, coreLoads[i]);
             }
