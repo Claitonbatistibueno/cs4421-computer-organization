@@ -8,8 +8,8 @@ import java.util.Comparator;
 public class htmlReport {
 
     // Flourish: Allow the HTML report to receive info from the hardware obj
-public static void write(String fileName, hardwareData data) throws Exception {
-    PrintWriter out = new PrintWriter(fileName);
+    public static void write(String fileName, hardwareData data) throws Exception {
+        PrintWriter out = new PrintWriter(fileName);
 
         out.println("<!DOCTYPE html>");
         out.println("<html><head><meta charset=\"utf-8\">");
@@ -24,29 +24,29 @@ public static void write(String fileName, hardwareData data) throws Exception {
         out.println("</style></head><body>");
         out.println("<h1>Hardware Inspector</h1>");
 
-// Flourish: Pass the collected CPU data to the HTML section
-cpuSection(out, data.coreLoads);
+        // Flourish: Pass the collected CPU data to the HTML section
+        cpuSection(out, data.coreLoads);
 
-// Flourish: Pass the collected memory data to the HTML section
-memSection(out, data.memory[0], data.memory[1]);   
-// Flourish: Pass the stored PCI devices to the HTML report
-pciSection(out, data.pciDevices);  
-// Flourish: Pass collected USB data to the HTML report
-usbSection(out, data.usbDevices);
+        // Flourish: Pass the collected memory data to the HTML section
+        memSection(out, data.memory[0], data.memory[1]);   
+        // Flourish: Pass the stored PCI devices to the HTML report
+        pciSection(out, data.pciDevices);  
+        // Flourish: Pass collected USB data to the HTML report
+        usbSection(out, data.usbDevices);
         out.println("</body></html>");
         out.close();
 
         System.out.println("HTML report saved to " + fileName);
     }
     // Flourish: overloading the write method to keep existing calls to htmlReport.write() working
-public static void write(String fileName) throws Exception {
-    hardwareData data = new hardwareData();
-    write(fileName, data);
+    public static void write(String fileName) throws Exception {
+        hardwareData data = new hardwareData();
+        write(fileName, data);
 }
 
- // Flourish: Receive CPU load data instead of measuring it again
-public static void cpuSection(PrintWriter out, double[] coreLoads) {
-    int coreCount = coreLoads.length - 1;
+    // Flourish: Receive CPU load data instead of measuring it again
+    public static void cpuSection(PrintWriter out, double[] coreLoads) {
+        int coreCount = coreLoads.length - 1;
 
         out.println("<h2>Processor</h2>");
         out.println("<p>Model: " + escape(cpuInfo.getModel()) + "<br>");
@@ -72,7 +72,7 @@ public static void cpuSection(PrintWriter out, double[] coreLoads) {
     }
 
        // Flourish: Receive memory data instead of reading it again
-        public static void memSection(PrintWriter out, double memTotal, double memUsed) {
+    public static void memSection(PrintWriter out, double memTotal, double memUsed) {
         double memPer = (memUsed / memTotal) * 100;
         
         out.println("<h2>Memory</h2>");
@@ -94,32 +94,31 @@ public static void cpuSection(PrintWriter out, double[] coreLoads) {
         out.println("<p>Red = Used<br> Green = Available</p>");
     }
 
-
    // Flourish: Receive collected PCI devices instead of reading them again
-public static void pciSection(PrintWriter out, String[][] devices) throws Exception {
- out.println("<h2>PCI devices (" + devices.length + ")</h2>");
+    public static void pciSection(PrintWriter out, String[][] devices) throws Exception {
+        out.println("<h2>PCI devices (" + devices.length + ")</h2>");
 
         if (devices.length == 0) {
             out.println("<p>No PCI devices could be found.</p>");
             return;
         }
 
-// Flourish: Copy the collected data so sorting doesn't change stored data
-String[][] sortedDevices = devices.clone();
+        // Flourish: Copy the collected data so sorting doesn't change stored data
+        String[][] sortedDevices = devices.clone();
 
-// Sort by vendor name
-Arrays.sort(sortedDevices,
+        // Sort by vendor name
+        Arrays.sort(sortedDevices,
         Comparator.comparing(row -> row[3],
                 Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
 
-out.println("<h3>Sorted by vendor name</h3>");
-pciTable(out, sortedDevices);
+        out.println("<h3>Sorted by vendor name</h3>");
+        pciTable(out, sortedDevices);
 
-// Sort by PCI address
-Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
+        // Sort by PCI address
+        Arrays.sort(sortedDevices, Comparator.comparing(row -> row[0]));
 
-out.println("<h3>Sorted by bus, device and function</h3>");
-pciTable(out, sortedDevices);
+        out.println("<h3>Sorted by bus, device and function</h3>");
+        pciTable(out, sortedDevices);
 
         out.println("<h3>Devices per vendor</h3>");
         countTable(out, devices, 3, "Vendor");
@@ -166,18 +165,18 @@ pciTable(out, sortedDevices);
 
     // 0 - Bus, 1 - Device, 2 - Vendor ID, 3 - Product ID, 4 - Vendor Name, 5 - Product Name
     // Flourish: Receive collected USB devices instead of reading them again
-public static void usbSection(PrintWriter out, String[][] devices) {
-out.println("<h2>USB devices (" + devices.length + ")</h2>");
-if (devices.length == 0) {
+    public static void usbSection(PrintWriter out, String[][] devices) {
+        out.println("<h2>USB devices (" + devices.length + ")</h2>");
+        if (devices.length == 0) {
                 out.println("<p>No USB devices could be found.</p>");
             return;
         }
 
         out.println("<table><tr><th>Bus</th><th>Device</th><th>Vendor:Product ID</th>"
                 + "<th>Vendor</th><th>Product</th></tr>");
-// Flourish: Use stored USB data instead of collecting it again
-for (String[] d : devices) {
-                out.println("<tr><td>" + d[0] + "</td><td>" + d[1] + "</td><td>" + d[2] + ":" + d[3]
+        // Flourish: Use stored USB data instead of collecting it again
+        for (String[] d : devices) {
+            out.println("<tr><td>" + d[0] + "</td><td>" + d[1] + "</td><td>" + d[2] + ":" + d[3]
                     + "</td><td>" + escape(d[4]) + "</td><td>" + escape(d[5]) + "</td></tr>");
         }
         out.println("</table>");
