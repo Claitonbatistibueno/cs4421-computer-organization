@@ -79,6 +79,27 @@ public class cpuInfo
         return cores;
     }
 
+    // Whether SMT is active, inferred from logical threads versus physical cores per package.
+    public static String getSmt()
+    {
+        String threads = getLogicalThreads();
+        String cores = getPhysicalCores();
+        if (threads.equals("unknown") || cores.equals("unknown")) {
+            return "unknown";
+        }
+
+        try {
+            int logicalThreads = Integer.parseInt(threads);
+            int physicalCores = Integer.parseInt(cores);
+            if (logicalThreads < physicalCores) {
+                return "unknown";
+            }
+            return logicalThreads > physicalCores ? "Yes" : "No";
+        } catch (NumberFormatException e) {
+            return "unknown";
+        }
+    }
+
     // Flourish: the "flags" line contains the word hypervisor when Linux runs inside
     // a virtual machine (for example alderaan or WSL2)
     public static String getHypervisor()

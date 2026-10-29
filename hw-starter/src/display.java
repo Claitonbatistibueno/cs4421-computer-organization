@@ -133,9 +133,11 @@ public class display {
         int coreCount = coreLoads.length - 1;
 
         System.out.printf("%n%s%n","==== CPU ====");
+        System.out.println("No. of Cores: " + coreCount);
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        System.out.println("SMT/Hyperthreading enabled: " + cpuInfo.getSmt());
         if (coreCount == 0) {
             System.out.println("CPU load couldn't be measured (no cores found in /proc/cpuinfo).");
             System.out.println();
