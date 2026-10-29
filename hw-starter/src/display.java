@@ -100,10 +100,6 @@ public class display {
 
         System.out.printf("%n%s%n","==== System Info ====");
         System.out.println("Model: " + cpuInfo.getModel());
-        System.out.println("Frequency: " + cpuInfo.getFrequency());
-        System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
-        System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
-        System.out.println("Hyperthreading/SMT: " + cpuInfo.getSmt());
         System.out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor());
         diskDisplay();
 
@@ -140,6 +136,7 @@ public class display {
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
+        System.out.println("SMT/Hyperthreading enabled: " + cpuInfo.getSmt());
         if (coreCount == 0) {
             System.out.println("CPU load couldn't be measured (no cores found in /proc/cpuinfo).");
             System.out.println();
