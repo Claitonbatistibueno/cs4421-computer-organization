@@ -24,9 +24,9 @@ public class htmlReport {
         out.println("</style></head><body>");
         out.println("<h1>Hardware Inspector</h1>");
 
+        sysSection(out);
         // Flourish: Pass the collected CPU data to the HTML section
         cpuSection(out, data.coreLoads);
-
         // Flourish: Pass the collected memory data to the HTML section
         memSection(out, data.memory[0], data.memory[1]);   
         // Flourish: Pass the stored PCI devices to the HTML report
@@ -44,17 +44,25 @@ public class htmlReport {
         write(fileName, data);
 }
 
+    public static void sysSection(PrintWriter out) {
+        out.println("<h2>System</h2>");
+        out.println("<p>Model: " + escape(cpuInfo.getModel()) + "<br>");
+        out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor() + "<br>");
+        String diskName = diskInfo.getDiskName();
+        if (diskName.isEmpty()) {
+            out.println("Disk Type: unknown (no disk found in /sys/block)</p>");
+            return;
+        }
+        out.println("Disk Type: " + diskInfo.getDriveType() + " (" + diskName + ") </p>");
+    }
     // Flourish: Receive CPU load data instead of measuring it again
     public static void cpuSection(PrintWriter out, double[] coreLoads) {
         int coreCount = coreLoads.length - 1;
 
         out.println("<h2>Processor</h2>");
-        out.println("<p>Model: " + escape(cpuInfo.getModel()) + "<br>");
-        out.println("Frequency: " + cpuInfo.getFrequency() + "<br>");
+        out.println("<p> Frequency: " + cpuInfo.getFrequency() + "<br>");
         out.println("Logical threads per package: " + cpuInfo.getLogicalThreads() + "<br>");
-        out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "<br>");
-        out.println("Running in a virtual machine (hypervisor): " + cpuInfo.getHypervisor() + "<br>");
-        out.println("Cores: " + cpuInfo.getCount() + "</p>");
+        out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "</p>");
 
         if (coreCount == 0) {   // no cores, so only the average slot exists
             out.println("<p>CPU load couldn't be measured (no cores found in /proc/cpuinfo).</p>");
