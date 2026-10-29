@@ -133,6 +133,7 @@ public class display {
         int coreCount = coreLoads.length - 1;
 
         System.out.printf("%n%s%n","==== CPU ====");
+        System.out.println("No. of Cores: " + coreCount);
         System.out.println("Frequency: " + cpuInfo.getFrequency());
         System.out.println("Logical threads per package: " + cpuInfo.getLogicalThreads());
         System.out.println("Physical cores per package: " + cpuInfo.getPhysicalCores());
