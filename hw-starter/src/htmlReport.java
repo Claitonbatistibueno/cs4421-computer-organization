@@ -62,7 +62,9 @@ public class htmlReport {
         out.println("<h2>Processor</h2>");
         out.println("<p> Frequency: " + cpuInfo.getFrequency() + "<br>");
         out.println("Logical threads per package: " + cpuInfo.getLogicalThreads() + "<br>");
-        out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "</p>");
+        out.println("Physical cores per package: " + cpuInfo.getPhysicalCores() + "<br>");
+        out.println("SMT / Hyper-Threading active: " + cpuInfo.getSmt() + "<br>");
+        out.println("Cores: " + cpuInfo.getCount() + "</p>");
 
         if (coreCount == 0) {   // no cores, so only the average slot exists
             out.println("<p>CPU load couldn't be measured (no cores found in /proc/cpuinfo).</p>");

@@ -38,6 +38,7 @@ public class airportReport {
         page = page.replace("{{FREQ}}", htmlReport.escape(cpuInfo.getFrequency()));
         page = page.replace("{{PHYSICAL}}", htmlReport.escape(cpuInfo.getPhysicalCores()));
         page = page.replace("{{LOGICAL}}", htmlReport.escape(cpuInfo.getLogicalThreads()));
+        page = page.replace("{{SMT}}", htmlReport.escape(cpuInfo.getSmt()));
         page = cpuParts(page, cores);
 
         // ---- 4 departure lounge (memory)

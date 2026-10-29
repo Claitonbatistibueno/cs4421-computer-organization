@@ -1867,12 +1867,14 @@
         <p>{{MODEL}}<br>
            Frequency: {{FREQ}}<br>
            Logical cores (runway queues): {{CORES}}<br>
-           Physical cores per package: {{PHYSICAL}}, threads per package: {{LOGICAL}}</p>
+           Physical cores per package: {{PHYSICAL}}<br>
+           Logical threads per package: {{LOGICAL}}<br>
+           SMT / Hyper-Threading active: {{SMT}}</p>
         {{RUNWAYS}}
         <p>Average load: <b>{{AVG_LOAD}}%</b></p>
       </div>
-      <p class="source">Read from <code>/proc/cpuinfo</code> (<code>processor</code>, <code>model name</code>, <code>cpu MHz</code>,
-         <code>siblings</code>, <code>cpu cores</code>) and the load from <code>/proc/stat</code>.</p>
+      <p class="source">Processor details are read from <code>/proc/cpuinfo</code> (<code>processor</code>, <code>model name</code>,
+         <code>cpu MHz</code>, <code>siblings</code>, <code>cpu cores</code>); load is read from <code>/proc/stat</code>.</p>
     </section>
 
     <nav class="tour" id="tour" hidden>
@@ -1925,7 +1927,7 @@
       <tr><td><span class="num">5</span>Departures board</td><td>ID names</td><td>{{AIRLINES}} vendors</td><td><code>ids/pci.ids</code>, <code>ids/usb.ids</code></td></tr>
       <tr><td><span class="num">6</span>Gates and service road</td><td>PCI bus and devices</td><td>{{PCI_COUNT}} devices</td><td><code>/sys/bus/pci/devices</code></td></tr>
       <tr><td><span class="num">7</span>Control tower</td><td>CPU load measurement</td><td>{{AVG_LOAD}}% average load</td><td><code>/proc/stat</code></td></tr>
-      <tr><td><span class="num">8</span>Runways</td><td>CPU cores</td><td>{{CORES}} cores</td><td><code>/proc/cpuinfo</code></td></tr>
+      <tr><td><span class="num">8</span>Runways</td><td>Logical and physical CPU cores; SMT</td><td>{{CORES}} logical; {{PHYSICAL}} physical/package; SMT {{SMT}}</td><td><code>/proc/cpuinfo</code></td></tr>
     </table>
   </div>
 </section>
